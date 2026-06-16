@@ -2,18 +2,20 @@
 
 # Metador
 
-### The consumer layer for **DeepBook Margin** on Sui
+### The non-custodial **vault layer for DeepBook Predict** on Sui
 
-**Hyperliquid-grade leverage trading UX on a non-custodial, on-chain margin market.**
-DeepBook owns matching, settlement, and liquidation. Metador owns the terminal, the
-risk presentation, and the flows — so traders get top-venue speed and clarity while
-custody and liquidation stay on the protocol, never with an operator.
+**PLP yield, minus the crash.** Metador is a tokenized-share vault that runs a
+PLP + crash-hedge strategy on DeepBook Predict's vol-surface-priced markets, under
+chain-enforced four-walls policy. DeepBook Predict owns pricing, settlement, and
+liquidation. Metador owns the vault, the policy, the tokenized share, the keeper,
+and the risk presentation — so an outside LP gets auditable, composable Predict
+exposure without the naked left-tail and without trusting an operator.
 
 [![Sui](https://img.shields.io/badge/Sui-Move%202024-6FBCF0)](https://sui.io)
-[![DeepBook](https://img.shields.io/badge/DeepBook-v3-1B1B2F)](https://deepbook.tech)
+[![DeepBook Predict](https://img.shields.io/badge/DeepBook-Predict-1B1B2F)](https://deepbook.tech)
 [![Next.js](https://img.shields.io/badge/Next.js-App%20Router-000000)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6)](https://www.typescriptlang.org)
-[![Turborepo](https://img.shields.io/badge/Monorepo-Turborepo%20%2B%20pnpm-EF4444)](https://turbo.build)
+[![Monorepo](https://img.shields.io/badge/Monorepo-Turborepo%20%2B%20pnpm-EF4444)](https://turbo.build)
 [![Network](https://img.shields.io/badge/Network-Testnet%20only-F5A623)](#status--safety)
 
 </div>
@@ -24,266 +26,218 @@ custody and liquidation stay on the protocol, never with an operator.
 
 - [The problem](#the-problem)
 - [What Metador is](#what-metador-is)
-- [Layer guardrail — what we build vs. what DeepBook owns](#layer-guardrail)
+- [Layer guardrail — what we build vs. what Predict owns](#layer-guardrail)
+- [The four walls, re-pointed at Predict](#the-four-walls-re-pointed-at-predict)
 - [Architecture](#architecture)
+- [The PLP + Hedge simulation](#the-plp--hedge-simulation)
 - [Money-safety law](#money-safety-law)
-- [On-chain: the `keel_core` Move package](#on-chain-the-keel_core-move-package)
 - [Repository layout](#repository-layout)
 - [Getting started](#getting-started)
-- [Verified testnet anchors](#verified-testnet-anchors)
-- [Error UX — the abort-code dictionary](#error-ux--the-abort-code-dictionary)
-- [Roadmap](#roadmap)
+- [Hackathon: how we meet the DeepBook Predict track](#hackathon-how-we-meet-the-deepbook-predict-track)
 - [How this was built — KAIOS](#how-this-was-built--kaios)
 - [Status & safety](#status--safety)
 - [License & originality](#license--originality)
 
----
-
 ## The problem
 
-Centralised perp and margin venues own the trading experience — fast order books,
-clean charts, instant fills — **but they hold your funds.** On-chain venues are
-non-custodial **but unusable** as consumer products.
-
-DeepBook Margin closes the infrastructure gap: a fully on-chain order book with
-matching, settlement, interest, and liquidation. **Nobody has yet built the consumer
-terminal on top of it.** That terminal is Metador.
+DeepBook **Predict** is a programmable, vol-surface-priced prediction/options market
+on Sui, with an on-chain pool — **PLP** — that takes the other side of every trade.
+PLP earns the pool's premium flow, but raw PLP carries a **naked left tail**: a sharp
+move can hand a cycle's losses straight to LPs. That tail is exactly what makes PLP a
+hard sell to serious outside capital — and there is **no consumer vault on top of
+Predict** that manages it.
 
 ## What Metador is
 
-A leveraged trading terminal — order book, candlestick chart, leverage entry, open
-positions with **live liquidation price, health factor, and PnL** — running against a
-non-custodial, on-chain margin market. The trader gets the experience of a top desk;
-the protocol keeps custody and liquidation.
-
-**Surfaces**
+A vault that supplies the bulk of its capital to PLP and spends a small slice each
+cycle on out-of-the-money binaries that pay off in a tail move — **"PLP yield minus
+crash insurance."** It issues a **tokenized share** (portable across Sui DeFi), is
+governed by four chain-enforced **policy walls**, auto-rolled by a permissionless
+**keeper**, and fronted by a **live SVI vol-surface viewer** and a **PLP risk panel**
+that make the strategy legible.
 
 | Surface | Path | What it is |
 |---|---|---|
-| **Trade terminal** | `apps/app` · `/trade/[market]` | Order book + depth, chart, leverage order entry, positions/PnL/liquidation |
-| **Screener** | `apps/app` · `/screener` | Market discovery with margin columns and a comparison view |
-| **Home** | `apps/web` | The story: the custody problem, the safety model, waitlist |
-| **Docs** | `apps/docs` | GitBook knowledge base (concepts, developers, safety) |
+| **Vault list** | `apps/app` · `/predict` | Strategy vaults + pool-level PLP summary |
+| **Vault detail** | `/predict/[id]` | Deposit/withdraw, tokenized share + NAV, the policy card + budget meter, positions, live activity feed, theatrical **REVOKE** |
+| **Vol-surface viewer** | (vault detail tab) | Strike → implied vol heatmap from the SVI oracle |
+| **PLP risk panel** | (vault detail tab) | Utilization, idle vs allocated, payout liability, ±σ what-if |
+| **Keeper** | `services/cranker` | Settled-redeem sweeps + auto-roll on settlement |
 
-> **Honest status.** The terminal is built to benchmark grade on a typed mock domain
-> (`apps/app/lib/mock-margin.ts`) while the live DeepBook **Margin** SDK integration is
-> wired in. The non-custodial vault/policy contracts (`contracts/keel_core`) are fully
-> implemented and unit-tested on testnet. See [Status & safety](#status--safety).
+> **Honest status.** The Move vault, the simulation, the keeper logic, and the full
+> UI are built and tested against the *real* Predict interface (vendored locally). The
+> live testnet round-trip needs a funded wallet + dUSDC — see
+> [Getting started](#getting-started). Until those IDs land, the UI runs on a typed
+> mock domain (`apps/app/lib/mock-predict.ts`).
 
 ## Layer guardrail
 
-The single most important boundary in this codebase. **A diff that crosses it is wrong
-by definition.**
+The most important boundary in this repo. **A diff that crosses it is wrong by
+definition.**
 
-| DeepBook owns (we call, never rebuild) | Metador builds |
+| DeepBook Predict owns (we call, never rebuild) | Metador builds |
 |---|---|
-| Custody (`BalanceManager`) | The terminal UI |
-| Matching & settlement | Order / position / risk presentation |
-| Order book & price oracles | Margin-manager flows (create · deposit · borrow · repay · withdraw) via the SDK |
-| **Liquidation** & interest | Screener, home, product polish |
-| The margin-manager primitive | Money-safe formatting, abort decoding, analytics |
+| Custody (`PredictManager` / BalanceManager) | `keel_core::predict_vault` — wraps a manager, locks a `PredictTradeCap`, issues a tokenized share |
+| The SVI vol surface, oracle, and pricing | The four-walls policy + leader gate |
+| Matching, settlement, **liquidation** | The PLP + hedge strategy and `roll` |
+| The PLP pool accounting | The settled-redeem keeper |
+| `mint` / `redeem` / `supply` primitives | The simulation + the product surfaces |
 
-We never write matching engines, settlement, oracles, or liquidation logic — that is
-DeepBook's layer.
+## The four walls, re-pointed at Predict
+
+`keel_core`'s policy model maps almost 1:1 onto Predict's `PredictManager`, which
+already exposes `mint_trade_cap`, `generate_proof_as_trader`, and `revoke_cap`:
+
+| Wall | Guarantee |
+|---|---|
+| **Budget** | Premium + PLP supply deployable per roll is capped; asserted before `mint`/`supply`. |
+| **Scope** | The vault binds one Pyth feed / expiry lineage — a trade on any other market aborts. |
+| **Expiry** | The vault's mandate ends at a real timestamp, independent of each rolling expiry. |
+| **Revoke** | The owner revokes the locked `TradeCap` instantly; the leader loses trade authority, depositors keep withdraw rights. The REVOKED flip is a designed, theatrical moment. |
+
+Every abort maps to a human message via [`docs/abort-codes.md`](docs/abort-codes.md);
+the TS side decodes them in [`packages/deepbook/src/predict.ts`](packages/deepbook/src/predict.ts).
 
 ## Architecture
-
-Four layers, two of them inherited from Sui & DeepBook:
 
 ```mermaid
 flowchart TD
     subgraph Products["Products — Metador (this repo)"]
-        WEB["apps/web<br/>Home + story"]
-        APP["apps/app<br/>Trade terminal · Screener"]
-        DOCS["apps/docs<br/>GitBook"]
+        APP["apps/app · /predict<br/>vault list + detail · vol surface · PLP risk"]
+        WEB["apps/web<br/>the PLP-safety story"]
+        KEEP["services/cranker<br/>settled-redeem keeper · auto-roll"]
     end
-    subgraph Contracts["Smart contracts — Move (same atomic tx as DeepBook)"]
-        KEEL["contracts/keel_core<br/>Vault · Policy (four walls) · shares/NAV · strategies"]
-        DB["DeepBook v3<br/>order book · matching · settlement · liquidation"]
+    subgraph Contracts["Smart contracts — Move (same atomic tx)"]
+        VAULT["contracts/keel_core::predict_vault<br/>locked TradeCap · four walls · tokenized share"]
+        PREDICT["DeepBook Predict<br/>PredictManager · PLP pool · SVI oracle · mint/redeem · settlement · liquidation"]
     end
-    subgraph Consensus["Consensus — Sui / Mysticeti (inherited)"]
-        SUI["Sui RPC + DeepBook indexer"]
+    subgraph Consensus["Consensus — Sui (inherited)"]
+        IDX["Sui RPC + predict-server indexer"]
     end
 
-    APP -->|"@mysten/dapp-kit · DeepBook SDK"| KEEL
-    APP -->|read: polling 2–5s| SUI
-    KEEL -.->|same floor, atomic| DB
+    APP -->|"@mysten/dapp-kit · Predict SDK"| VAULT
+    APP -->|"read: SVI surface, NAV (polling)"| IDX
+    VAULT -.->|"supply / mint / redeem_settled, walls re-checked"| PREDICT
+    KEEP -->|"redeem_settled (permissionless) · roll"| VAULT
     WEB --> APP
-    SVC["services/cranker<br/>permissionless ticks · public CLI"] -->|chain re-verifies every call| KEEL
 ```
 
-Visual source of truth lives in [`docs/diagrams/`](docs/diagrams) (system architecture,
-trade flow, deposit/withdraw/crank, Move object model, page routing).
+Decision record: [ADR-009](docs/decisions/009-predict-vault-pivot.md). Diagrams in
+[`docs/diagrams/`](docs/diagrams). Tech: **Sui Move** (2024), **Next.js** (App
+Router) + **TypeScript strict** on custom design tokens, **Motion** for animation,
+`lightweight-charts`, **pnpm + Turborepo**, Vitest.
 
-### Tech stack
+## The PLP + Hedge simulation
 
-| Concern | Choice |
-|---|---|
-| Contracts | **Sui Move**, edition 2024 — the only audited surface |
-| Frontend | **Next.js** (App Router), **TypeScript strict**, Tailwind on custom design tokens |
-| Animation | **Motion** (motion.dev) — single animation library; `lightweight-charts` for candles |
-| Sui / DeepBook | `@mysten/dapp-kit`, `@mysten/sui`, **DeepBook v3 SDK** |
-| Services | `services/cranker` — plain Node + TS worker, untrusted by design |
-| Tooling | **pnpm** workspaces + **Turborepo**, Vitest, Playwright, PostHog |
+A vault strategy must ship a **credible simulation** — and this is where Metador's
+money-safety discipline becomes a visible edge.
+[`packages/deepbook/src/sim/plp-hedge.ts`](packages/deepbook/src/sim/plp-hedge.ts)
+backtests the strategy over a cycle series in **integer base units**, fully
+deterministic, with **known-answer tests**. On a worked −5σ crash cycle:
+
+| | Hedged vault | Naked PLP |
+|---|---|---|
+| End NAV (from 1,000 dUSDC) | **1,082.9** | 867.0 |
+| **Max drawdown** | **1.06%** | 15.00% |
+
+The hedge turns a 15% tail into ~1% — the exact "is PLP safe?" answer outside LPs
+need. Run it: `pnpm --filter @metador/deepbook test`.
 
 ## Money-safety law
 
 This product touches funds, so the rules are absolute and enforced in code:
 
-- **All money is `bigint` base units, end-to-end.** Floats never touch balances,
-  prices, PnL, health, interest, or liquidation math. Decimals come from on-chain coin
-  metadata.
-- **Every financial calculation ships known-answer unit tests** (NAV, shares, fees,
-  liquidation price, health factor).
-- **Simulate before signing.** Every transaction is `dryRun`'d and exact effects shown
-  before a signature is requested; indexer lag is accounted for.
-- **Liquidation price is always visible** on open positions.
-- **Claim discipline.** We say "funds cannot be stolen; losses are capped by your
-  ceiling" — never "you can't lose money." No earnings promises anywhere.
+- **All money is `bigint` base units, end-to-end** — balances, premium, payout, NAV,
+  PLP value, shares. JS floats never touch the money path; decimals come from
+  on-chain coin metadata.
+- **Every financial calculation ships known-answer tests** — including the vault's
+  share/NAV math and the PLP+hedge simulation.
+- **Simulate before signing** — every tx is `dryRun`'d and exact effects shown.
+- **Max loss is always visible** (premium at risk) and risk is disclosed before the
+  first deposit.
+- **Claim discipline** — "funds cannot be stolen; losses are capped by your premium."
+  No earnings promises anywhere.
 - **Testnet only** until the founder writes "go mainnet" in the decision log.
-
-## On-chain: the `keel_core` Move package
-
-A small (~900 LoC) original Move package — the non-custodial foundation. It locks a
-DeepBook `TradeCap` at vault birth and enforces **four policy walls** that the chain
-re-checks before *any* DeepBook call:
-
-| Wall | Guarantee |
-|---|---|
-| **Budget** | An order cannot exceed the vault's ceiling. |
-| **Scope** | A vault may only trade its one allowed market. |
-| **Expiry** | The mandate stops at a real timestamp. |
-| **Revocation** | The owner can revoke instantly; funds stay safe and withdrawable. |
-
-Modules: `vault` (shares ledger, deposit/withdraw, locked `TradeCap`, revoke) ·
-`shares` (pure NAV/shares math, known-answer tested) · `delegate` · `dca`
-(permissionless tick, walls re-checked) · `agent_mandate` (the verified testnet spike).
-Backed by **60+ Move unit tests with full abort-path coverage**; every abort maps to a
-human message via [`docs/abort-codes.md`](docs/abort-codes.md).
-
-> Per [ADR-007](docs/decisions/007-v4-margin-pivot.md), `keel_core` (the spot-vault
-> thesis) is **shelved, not deleted** — the v4 product is the DeepBook Margin terminal.
-> The package remains as proven, tested, non-custodial infrastructure.
 
 ## Repository layout
 
 ```
 metador/
 ├── apps/
-│   ├── app/          # the product: trade terminal, screener, portfolio, safety
-│   ├── web/          # marketing home + story
-│   └── docs/         # GitBook knowledge base
+│   ├── app/          # /predict vault UI · vol-surface viewer · PLP risk panel
+│   └── web/          # the PLP-safety story
 ├── contracts/
-│   └── keel_core/    # Move — Vault, Policy (four walls), shares/NAV, strategies, tests
+│   └── keel_core/    # Move — predict_vault (four walls), shares/NAV, tests
+│                     #   + PREDICT-SPIKE.md (testnet round-trip runbook)
 ├── services/
-│   └── cranker/      # Node + TS worker: permissionless ticks + public CLI
+│   └── cranker/      # settled-redeem keeper + auto-roll, public CLI
 ├── packages/
-│   ├── ui/           # shared components (DataTable, primitives)
-│   ├── design-system/# frozen design tokens — consumed by both apps
-│   ├── deepbook/     # DeepBook SDK glue, constants, money formatting + abort decoding
-│   ├── analytics/    # the single analytics event registry
-│   └── reference-lab/# benchmark capture + measurement tooling
+│   ├── deepbook/     # Predict domain types · bigint money format · abort decoding
+│   │                 #   + src/sim (the PLP+hedge simulation)
+│   ├── ui/  design-system/  analytics/  reference-lab/
 ├── docs/             # diagrams, decisions (ADRs), abort-codes, research distillates
 ├── mind/             # the build journal — every step recorded
-└── PRODUCT.md · ARCHITECTURE.md · DESIGN.md · CLAUDE.md   # standing source-of-truth docs
+└── PRODUCT.md · ARCHITECTURE.md · DESIGN.md · CLAUDE.md
 ```
 
 ## Getting started
 
-**Prerequisites**
-
-- **Node ≥ 22** and **pnpm 9.14+** (`corepack enable`)
-- **Sui CLI** (for the Move contracts) — [install](https://docs.sui.io/guides/developer/getting-started/sui-install)
-- A Sui wallet (e.g. Sui Wallet / Suiet) on **testnet**
-
-**Install & run**
+**Prerequisites:** Node ≥ 22, pnpm 9.14+ (`corepack enable`),
+[Sui CLI](https://docs.sui.io/guides/developer/getting-started/sui-install),
+a Sui wallet on **testnet**.
 
 ```bash
-pnpm install            # install the whole workspace
+pnpm install
+pnpm dev                            # run the apps (Turborepo)
+pnpm --filter @metador/app dev      # just the vault app → /predict
 
-pnpm dev                # run all apps (Turborepo) — web + app
-pnpm --filter @metador/app dev    # run just the trade terminal
-pnpm --filter @metador/web dev    # run just the home
+pnpm typecheck && pnpm lint && pnpm test    # the quality gate
+cd contracts/keel_core && sui move test --gas-limit 100000000000
 ```
 
-**Quality gates** (the definition of done for every change)
+**The testnet round-trip (founder-gated — needs funds + dUSDC):** follow
+[`contracts/keel_core/PREDICT-SPIKE.md`](contracts/keel_core/PREDICT-SPIKE.md) —
+fund the wallet, request dUSDC (`https://tally.so/r/Xx102L`), re-pin the Predict
+source to branch `predict-testnet-4-16`, then run `create → deposit → mint → settle
+→ redeem_settled`. The runbook records the deployed object IDs into
+`packages/deepbook/src/constants.ts`.
 
-```bash
-pnpm typecheck          # TypeScript strict, no `any` on money paths
-pnpm lint
-pnpm test               # Vitest — unit tests on all money-formatting paths
-pnpm build              # production build (LCP/CLS budgets enforced)
-```
+## Hackathon: how we meet the DeepBook Predict track
 
-**Contracts**
-
-```bash
-cd contracts/keel_core
-sui move test           # 60+ unit tests, abort-path coverage
-
-# optional: seed DeepBook objects on testnet
-pnpm setup:contracts
-```
-
-## Verified testnet anchors
-
-Re-verified before any mainnet move. Source: DeepBook v3 SDK `constants.ts`.
-
-| Object | ID |
+| Track requirement | How Metador meets it |
 |---|---|
-| DeepBook package | `0x22be4cade64bf2d02412c7e8d0e8beea2f78828b948118d46735315409371a3c` |
-| Registry | `0x7c256edbda983a2cd6f946655f4bf3f00a41043993781f8674a7046e8c0e11d1` |
-| SUI / DBUSDC pool | `0x1c19362ca52b8ffd7a33cee805a67d40f31e6ba303753fd3a4cfdfacea7163a5` |
-| DEEP / SUI pool | `0x48c95963e9eac37a316b7ae04a0deb761bcdcc2b67912374d6036e7f0e9bae9f` |
-| Clock | `0x6` |
-
-## Error UX — the abort-code dictionary
-
-A failed transaction must never show a raw abort code. [`docs/abort-codes.md`](docs/abort-codes.md)
-is the single source of truth: every on-chain abort maps to a plain-English message,
-and `/risk-review` checks the Move constants and the UI table stay in sync. Example:
-
-> `ERevoked` → *"This vault was revoked by its owner. Funds are safe and withdrawable."*
-
-## Roadmap
-
-| Phase | Focus | Exit |
-|---|---|---|
-| **P0** | Foundations: tokens, benchmarks, margin primitives, app shell, DeepBook spike | Spike passes on testnet with known-answer liquidation/health tests |
-| **P1** | Core loop: discover → connect → deposit → leverage → position/PnL/liquidation → withdraw | Founder completes the cycle on testnet in the UI |
-| **P2** | Differentiation: live screener, polished home + waitlist, copy-trading, profiles/leaderboard | — |
-| **P3** | Launch prep: GitBook docs, analytics, perf, `/risk-review` of every funds path, guarded mainnet | External office-hours reviews + caps enforced in Move + founder sign-off |
-
-Full detail in [`PRODUCT.md`](PRODUCT.md) and [`docs/decisions/`](docs/decisions).
+| **Integrate the Predict contract on testnet** | `predict_vault` calls `PredictManager`, `pool/plp::supply/withdraw`, `expiry_market::mint`/`redeem_settled`; round-trip runbook in `PREDICT-SPIKE.md`. |
+| **Work end-to-end** | deposit → roll (PLP supply + OTM hedge) → settle → redeem → withdraw, fronted by the `/predict` UI. |
+| **Proper simulation (for a vault)** | `packages/deepbook/src/sim` — deterministic PLP+hedge backtest with known-answer tests and a naked-PLP comparison. |
+| Bonus — composable share | tokenized vault share, designed to plug into `deepbook_margin` / `iron_bank` (idea #4). |
+| Bonus — keeper | `services/cranker` settled-redeem + auto-roll (idea #8). |
+| Bonus — analytics | live SVI vol-surface viewer + PLP risk dashboard (ideas #9/#10). |
 
 ## How this was built — KAIOS
 
-Metador is built by **KAIOS**, an AI operating system that runs inside the repo: a
-founding team of specialised subagents (`product`, `design`, `protocol`, `frontend`,
-`growth`), review commands (`/risk-review`, `/design-review`, `/arch-review`), a frozen
-design-token system, and a **reference lab** that measures world-class benchmarks and
-ships only principles — never their assets. The discipline is recorded in
-[`CLAUDE.md`](CLAUDE.md), the decision log ([`docs/decisions/`](docs/decisions)), and a
-per-step build journal under [`mind/`](mind). Everything ships in small, verifiable
-increments behind hard quality and money-safety gates.
+Metador is built by **KAIOS**, an AI operating system running inside the repo: a
+team of specialised subagents (`product`, `design`, `protocol`, `frontend`,
+`growth`), review commands (`/risk-review`, `/design-review`), a frozen design-token
+system, and a reference lab that ships only principles — never competitors' assets.
+The discipline is recorded in [`CLAUDE.md`](CLAUDE.md), the decision log
+([`docs/decisions/`](docs/decisions)), and a per-step journal under
+[`mind/`](mind) — small, verifiable increments behind hard quality and money-safety
+gates.
 
 ## Status & safety
 
-- 🟡 **Testnet only.** No mainnet deployment. No real funds. Caps and fees-off are
-  enforced in Move before any mainnet move.
-- This is **not financial advice** and contains **no earnings promises**. Leverage is
-  real risk: positions can be liquidated and losses can be total. Risk is disclosed
-  before the first leveraged action; liquidation price is always visible.
+- 🟡 **Testnet only.** No mainnet, no real funds. The vendored Predict source is on
+  `main`; re-pin to `predict-testnet-4-16` before the live round-trip.
+- **Not financial advice; no earnings promises.** Predict positions are leveraged
+  option ranges — losses are real and capped by the premium at risk; PLP can lose in
+  a tail (which is exactly what the hedge addresses). Risk is disclosed before the
+  first deposit.
 - Private keys and seed phrases are never requested, stored, or logged. All signing
-  happens in the user's connected wallet. Any addresses in this repo are **disposable
-  testnet keys**.
+  is in the connected wallet. Any addresses here are **disposable testnet keys**.
 
 ## License & originality
 
-Metador is an **original brand and implementation**. Per the project's Reference
-Extraction Protocol, competitor study yields only measurements, structures, and
-principles written in our own words — never their fonts, images, copy, or palettes.
-A stranger seeing Metador beside any benchmark reads two different products.
-
-> Licensing is finalised before mainnet; until then the code is shared for hackathon
-> review. See [`docs/decisions/`](docs/decisions) for the open compliance items.
+Metador is an **original brand and implementation**. Per the Reference Extraction
+Protocol, competitor study yields only measurements and principles in our own words —
+never their assets. Licensing is finalised before mainnet; until then the code is
+shared for hackathon review.

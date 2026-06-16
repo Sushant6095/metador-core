@@ -9,23 +9,28 @@ DeepBook (trading, inherited) and `contracts/keel_core` (ours, ~900 LoC
 target) live on the SAME floor, same atomic transactions → Products
 (`apps/app`, `apps/web`).
 
-## What we build
-- `contracts/keel_core` — Vault (locks TradeCap at birth), Policy (four
-  walls: budget/scope/expiry/revoke + leader gate + order cap), Delegate +
-  DCA strategies, shares/NAV, events. Seeded from the proven `agent_mandate`
-  spike (currently still named agent_mandate — rename during port).
-- `apps/app` — marketplace, vault detail, cockpit (leader-only), wizard,
-  portfolio, safety. Visual contract: docs/research/keel-ui-prototype.html.
-- `apps/web` — landing (shell G1, polish G2).
-- `services/cranker` — ~300 LoC Node worker + public CLI; DCA ticks; chain
-  re-verifies everything.
-- `packages/` — ui, design-system, deepbook (SDK glue + abort decoding),
-  analytics, reference-lab.
+## What we build (G1 = DeepBook Predict vault — ADR-009)
+- `contracts/keel_core` — `predict_vault` (wraps a `PredictManager`, locks a
+  `PredictTradeCap` at birth, issues a tokenized share via `shares.move`), Policy
+  (four walls: budget/scope/expiry/revoke + leader gate), the PLP+hedge `roll`,
+  events. Reuses the proven `vault`/`shares`/`dca` modules (spot-vault thesis,
+  shelved per ADR-007 but the math + tests port directly).
+- `apps/app` — vault list + detail (deposit/withdraw, tokenized share, policy card,
+  REVOKE), live SVI vol-surface viewer, PLP risk panel. (The margin terminal at
+  `/trade` is retained as a composability demo.)
+- `apps/web` — landing: the PLP-safety story → the hedged vault.
+- `services/cranker` — Node worker + public CLI; **settled-redeem keeper**
+  (`redeem_settled`) + auto-roll on settlement; chain re-verifies everything.
+- `packages/` — ui, design-system, deepbook (Predict domain types + bigint money
+  format + abort decoding + the PLP+hedge **simulation** in `src/sim`), analytics,
+  reference-lab.
 
 ## What we call, never build
-DeepBook v3 (BalanceManager custody, TradeCap/TradeProof, place_limit_order),
-DeepBook Margin (G4), DeepBook Predict (G4), Sui RPC + DeepBook indexer
-(read layer, client polling 2–5s in v1).
+DeepBook **Predict** (`PredictManager` custody + caps/proof/revoke, PLP pool
+`supply`/`withdraw`, `expiry_market::mint`/`redeem_settled`, the SVI oracle +
+pricing, settlement, liquidation), DeepBook v3 spot (BalanceManager), DeepBook
+Margin (composability surface), Sui RPC + `predict-server` indexer (read layer,
+client polling 2–5s in v1).
 
 ## Verified testnet anchors (re-verify before mainnet)
 DeepBook pkg 0x22be4cade64bf2d02412c7e8d0e8beea2f78828b948118d46735315409371a3c ·

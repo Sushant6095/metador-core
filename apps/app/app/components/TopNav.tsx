@@ -12,6 +12,7 @@ interface NavLink {
 }
 
 const NAV_LINKS: NavLink[] = [
+  { href: '/predict', label: 'Predict' },
   { href: '/trade', label: 'Trade' },
   { href: '/', label: 'Marketplace' },
   { href: '/screener', label: 'Screener' },

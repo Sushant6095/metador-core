@@ -1,36 +1,50 @@
 # PRODUCT.md — Metador
 
-**One-liner.** Metador is the consumer layer for **DeepBook Margin on Sui**: a
-leveraged trading terminal with top-venue UX on a non-custodial, on-chain
-margin market. We make DeepBook Margin usable by humans.
+**One-liner.** Metador is the **non-custodial vault layer for DeepBook Predict on
+Sui**: a tokenized-share vault that runs a PLP + crash-hedge strategy on Predict's
+vol-surface-priced markets, under chain-enforced four-walls policy — "PLP yield
+minus crash insurance" that an outside LP can actually audit and compose against.
 
-**Thesis.** The best margin trading experience doesn't have to be custodial.
-DeepBook provides the order book, matching, settlement, and liquidation
-on-chain; Metador provides the terminal, the risk presentation, and the flows —
-so a trader gets Hyperliquid-grade speed and clarity while custody and
-liquidation stay on the protocol, not with an operator.
+**Thesis.** Predict gives Sui a programmable, vol-surface-priced prediction/options
+market with an on-chain pool (PLP) that takes the other side. What it lacks is a
+*product*: a safe, legible way for non-experts to allocate into it. Metador is that
+product — DeepBook owns pricing, matching, settlement, and liquidation; Metador owns
+the vault, the policy walls, the tokenized share, the keeper, and the risk
+presentation. Capital stays non-custodial; the leader can only trade within the
+walls; the owner can revoke instantly.
 
-**Target user (v1).** The on-chain leverage trader who wants a real terminal —
-order book, chart, leverage, positions with live liquidation price and PnL —
-without trusting a centralised desk or a custodial vault operator.
+**Target user (v1).** (a) The LP who wants Predict PLP yield without the naked
+left-tail — a vault that hedges the crash. (b) The allocator who wants a portable,
+composable share token representing a Predict strategy, not a position locked inside
+one app.
 
-**Why now.** Centralised perp/margin venues own the UX but hold the funds;
-on-chain venues are non-custodial but unusable. DeepBook Margin closes the
-infrastructure gap; nobody has built the consumer terminal on top of it yet.
+**Why now.** Predict is live on Sui testnet (rolling sub-hour BTC oracles, dUSDC
+quote, public indexer) with mainnet planned. The pool exists; the consumer vault on
+top of it does not. Metador's tested vault/shares/four-walls infrastructure
+(`keel_core`) maps almost 1:1 onto Predict's `PredictManager` cap/proof/revoke model
+— see [ADR-009](docs/decisions/009-predict-vault-pivot.md).
+
+> The DeepBook **Margin** terminal (ADR-007) is retained as a composability
+> flourish — the tokenized vault share as margin collateral — not the G1 headline.
 
 ## What we build vs. what DeepBook owns (layer guardrail)
-- **DeepBook owns:** custody, matching, settlement, order book, oracles,
-  **liquidation**, interest, the margin-manager primitive.
-- **Metador builds:** the terminal UI, order/position/risk presentation, the
-  margin-manager flows (create/deposit/borrow/repay/withdraw) via the SDK, the
-  screener, the home, product polish. Never matching/settlement/oracles/
-  liquidation engines — a diff containing those is wrong by definition.
+- **DeepBook Predict owns:** custody (`PredictManager`/BalanceManager), the SVI
+  vol surface + oracle, pricing, matching, settlement, **liquidation**, the PLP
+  pool accounting, the `mint`/`redeem` primitives.
+- **Metador builds:** `keel_core::predict_vault` (wraps a `PredictManager`, locks a
+  `PredictTradeCap`, issues a tokenized share), the four-walls policy, the PLP+hedge
+  strategy + `roll`, the settled-redeem keeper, the simulation, and the product
+  surfaces (vault UI, vol-surface viewer, PLP risk panel). Never pricing/matching/
+  settlement/oracles/liquidation — a diff containing those is wrong by definition.
 
 ## Surfaces
-- **App** (`apps/app`) — the trading terminal. Benchmark: app.hyperliquid.xyz.
-- **Screener** (`/screener` + Home teaser) — benchmark: hyperscreener.asxn.xyz.
-- **Home** (`apps/web`) — benchmark: hyperfoundation.org.
+- **Vault app** (`apps/app`) — vault list + detail (deposit/withdraw, tokenized
+  share, policy card, REVOKE), live **SVI vol-surface viewer**, **PLP risk panel**.
+- **Home** (`apps/web`) — the story: the PLP-safety problem → the hedged vault.
+- **Keeper** (`services/cranker`) — settled-redeem sweeps + auto-roll on settlement.
 - **Docs** — external GitBook.
+- *Composability flourish:* the existing margin terminal (`/trade`) — the vault
+  share as `deepbook_margin` collateral (idea #4), demoed, not the headline.
 
 ## Non-goals (v1)
 - Not an exchange (DeepBook is). No matching/settlement/oracle/liquidation code.
@@ -39,28 +53,27 @@ infrastructure gap; nobody has built the consumer terminal on top of it yet.
   plainly; losses are real and can be total — never implied absent.
 
 ## Money-safety law
-All balance/price/PnL/liquidation/health/interest math in `bigint` base units;
-floats never touch money; every such calc ships known-answer tests. Liquidation
-price always visible on open positions. Risk disclosure before the first
-leveraged action. `dryRun` + exact effects shown before any signature. Testnet
-only until the founder writes "go mainnet".
+All balance/premium/payout/NAV/PLP/share math in `bigint` base units; floats never
+touch money; every such calc ships known-answer tests (incl. the PLP+hedge
+simulation, `packages/deepbook/src/sim`). Max loss (premium at risk) and payoff
+range always visible on open positions. Risk disclosure before the first deposit.
+`dryRun` + exact effects shown before any signature. Testnet only until the founder
+writes "go mainnet".
 
-## Roadmap (v4 §14)
-- **P0** foundations: product truth + tokens ratified + benchmark capture +
-  margin primitives + App shell (markets → terminal) + Home copy refactor +
-  **DeepBook Margin spike** (testnet, known-answer liquidation/health tests).
-- **P1** core loop: discovery → connect → deposit → leverage → position/PnL/
-  liquidation display → withdraw. **Exit:** founder completes the cycle on
-  testnet in the UI.
-- **P2** differentiation: screener live (margin columns + comparison
-  dashboard), Home polished + waitlist, copy-trading (DECIDE-001 follow-on),
-  profiles/leaderboard.
-- **P3** launch prep: GitBook docs, analytics, perf, `/risk-review` of every
-  funds path.
+## Roadmap (G1 Predict — ADR-009)
+- **P0** spike: founder funds OWNER + dUSDC; `create → deposit → mint → settle →
+  redeem_settled` on testnet; record deployed IDs (`PREDICT-SPIKE.md`).
+- **P1** core: `predict_vault` (deposit/withdraw + tokenized share + four walls +
+  `roll`) green under `sui move test`; PLP+hedge simulation with known-answer tests.
+  **Exit:** founder completes deposit → roll → withdraw on testnet in the UI.
+- **P2** product: vault list/detail UI, live SVI vol-surface viewer, PLP risk panel,
+  settled-redeem keeper auto-rolling on settlement; Home reframed + waitlist.
+- **P3** launch prep: GitBook docs, analytics, perf, `/risk-review` of every funds
+  path; composability demo (vault share as `deepbook_margin` collateral).
 
-**Decision rule for every feature:** on the core trade→position→risk path AND
-it deepens trust in a non-custodial margin terminal — or it's roadmap, not code.
+**Decision rule for every feature:** on the deposit→roll→redeem→withdraw path AND it
+deepens trust in a non-custodial, auditable Predict vault — or it's roadmap, not code.
 
-> History: the v3.1 spot-vault thesis (strategy vaults, locked `TradeCap`,
-> copy-trading) is superseded by [ADR-007](docs/decisions/007-v4-margin-pivot.md).
-> `contracts/keel_core` is shelved, not deleted.
+> History: v3.1 spot vaults → [ADR-007](docs/decisions/007-v4-margin-pivot.md) margin
+> terminal → [ADR-009](docs/decisions/009-predict-vault-pivot.md) Predict vault (G1).
+> Earlier surfaces are retained as composability, not deleted.

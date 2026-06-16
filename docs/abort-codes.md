@@ -58,6 +58,27 @@ must stay in sync — /risk-review checks both directions.
 |---|---|---|---|
 | 35 | EZeroExpiry | vault | Vault expiry must be a real timestamp greater than zero. Perpetual vaults are not supported. |
 
+## agent_mandate::predict_vault (ADR-009 — the Predict vault: four walls + shares)
+
+Codes are namespaced per module, so they restart at 1 (they never collide with
+`vault`'s codes on-chain — the abort carries the module). The four walls map to
+1–4; role gates to 5–6; value/lifecycle guards to 7–12.
+
+| Code | Move const | Module | Human message (UI) |
+|---|---|---|---|
+| 1 | ERevoked | predict_vault | This vault was revoked by its owner. Funds are safe and withdrawable. |
+| 2 | EExpired | predict_vault | This vault's mandate has expired. Withdraw anytime; no new rolls. |
+| 3 | EOutOfScope | predict_vault | The chain refused: this vault may only trade its bound Predict market. |
+| 4 | EBudgetExceeded | predict_vault | The chain refused: this roll would exceed the vault's per-roll budget. |
+| 5 | ENotLeader | predict_vault | Only the vault's leader can roll the strategy. |
+| 6 | ENotOwner | predict_vault | Only the vault owner can revoke or reclaim. |
+| 7 | EZeroAmount | predict_vault | Deposit, withdrawal, or roll amount must be greater than zero. |
+| 8 | EInsufficientShares | predict_vault | You do not hold enough shares to withdraw that amount. |
+| 9 | ENotRevoked | predict_vault | Reclaim requires the vault to be revoked first. |
+| 10 | EVaultNotEmpty | predict_vault | Cannot reclaim: depositors still hold shares. Ask them to withdraw first. |
+| 11 | EWrongManager | predict_vault | Vault/manager mismatch — refusing to touch a different account's funds. |
+| 12 | EZeroExpiry | predict_vault | Mandate expiry must be a real timestamp greater than zero. No perpetual vaults. |
+
 ## DeepBook-side aborts (their codes, our copy)
 
 | Code | Source | Human message (UI) |

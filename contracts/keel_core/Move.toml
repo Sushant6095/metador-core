@@ -9,6 +9,21 @@ version = "0.1.0"
 #   deepbook  published-at 0x22be…1a3c · addresses 0xfb28…6982 (registry type-origin)
 #   token     published-at = addresses = 0x36dbef…58a8 (from its Move.lock [env.testnet])
 deepbook = { local = "../deepbookv3/packages/deepbook" }
+# ADR-009: the Predict vault layer. `deepbook_predict` supplies PredictManager,
+# the locked-cap + proof + revoke model, plp::supply/withdraw, and
+# expiry_market::mint/redeem. `dusdc` is the quote coin type Predict settles in.
+deepbook_predict = { local = "../deepbookv3/packages/predict" }
+dusdc = { local = "../deepbookv3/packages/dusdc" }
+# Source unification (move.md "Match the source of a transitively-shared
+# dependency"): `deepbook` pulls `token` via `local = "../token"`, while
+# `deepbook_predict`'s own manifest pulls it via `git ... rev = main`. Those are
+# different commits of the single package ID 0x36dbef…58a8, so the resolver
+# demands an explicit override. Pin it to the same local clone deepbook uses.
+token = { local = "../deepbookv3/packages/token", override = true }
 
-[addresses]
-agent_mandate = "0x0"
+# ADR-009: `dusdc` (a Predict dependency) is a new-style manifest. The package
+# manager forbids an old-style root from depending on a new-style package, so
+# this package is migrated to new-style: the `[addresses]` section is removed
+# (the root binds `agent_mandate` to 0x0 implicitly). `testnet` and `mainnet`
+# are built-in system environments, so no `[environments]` block is needed.
+# Testnet-only until "go mainnet" lands in the decision log (CLAUDE.md §1).
