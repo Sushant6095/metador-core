@@ -5,7 +5,7 @@
  *
  * - 4 operational stats (testnet-preview placeholder values clearly labelled)
  * - Count-up once on first viewport entry (Motion useInView once:true)
- * - Animates a motion value from 0 → final; numbers via Geist Mono tabular
+ * - Animates a motion value from 0 → final; numbers via Inter tabular-nums
  * - respects prefers-reduced-motion (instant final values, no count-up)
  * - One tinted card (--metador-surface border --metador-border)
  * - Bg world: dark --metador-bg (§8.4 dark section)

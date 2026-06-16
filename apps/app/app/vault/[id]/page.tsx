@@ -22,7 +22,7 @@ import { getMockVault } from '../../../lib/mock-vaults';
 import type { MockVault } from '../../../lib/mock-vaults';
 import { RevokeDialog } from './RevokeDialog';
 
-// ── Hardcoded feed data ───────────────────────────────────────────────────────
+// ── Feed data ─────────────────────────────────────────────────────────────────
 
 interface FeedEntry {
   kind: 'order' | 'rejected' | 'revoked' | 'deposit' | 'withdraw';
@@ -33,7 +33,7 @@ interface FeedEntry {
 }
 
 function buildFeed(vault: MockVault): FeedEntry[] {
-  const base = Date.now() - 1000 * 60 * 60; // 1 hour ago
+  const base = Date.now() - 1000 * 60 * 60;
   const isRevoked = vault.status === 'revoked';
 
   const entries: FeedEntry[] = [
@@ -93,7 +93,7 @@ function buildFeed(vault: MockVault): FeedEntry[] {
   return entries.slice(0, 8);
 }
 
-// ── Status badge — crossfades between Live and REVOKED ─────────────────────────
+// ── Status badge ──────────────────────────────────────────────────────────────
 
 function StatusBadge({ revoked }: { revoked: boolean }) {
   return (
@@ -106,14 +106,18 @@ function StatusBadge({ revoked }: { revoked: boolean }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: DURATIONS_S.slow, ease: EASE_ENTER }}
-            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-xs text-xs font-semibold uppercase tracking-widest border"
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-xs text-2xs font-medium uppercase tracking-widest border"
             style={{
               backgroundColor: 'var(--metador-tint-revoke)',
               borderColor: 'var(--metador-revoke)',
               color: 'var(--metador-revoke)',
             }}
           >
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-revoke" aria-hidden="true" />
+            <span
+              className="inline-block w-1.5 h-1.5 rounded-full"
+              style={{ backgroundColor: 'var(--metador-revoke)' }}
+              aria-hidden="true"
+            />
             REVOKED
           </motion.span>
         ) : (
@@ -123,9 +127,18 @@ function StatusBadge({ revoked }: { revoked: boolean }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: DURATIONS_S.fast, ease: EASE_ENTER }}
-            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-xs text-xs font-medium uppercase tracking-widest border border-success/30 text-success bg-success/10"
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-xs text-2xs font-medium uppercase tracking-widest"
+            style={{
+              border: '1px solid rgba(31,166,125,0.3)',
+              color: 'var(--metador-success)',
+              backgroundColor: 'var(--metador-tint-success)',
+            }}
           >
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-success" aria-hidden="true" />
+            <span
+              className="inline-block w-1.5 h-1.5 rounded-full"
+              style={{ backgroundColor: 'var(--metador-success)' }}
+              aria-hidden="true"
+            />
             Live
           </motion.span>
         )}
@@ -134,7 +147,56 @@ function StatusBadge({ revoked }: { revoked: boolean }) {
   );
 }
 
-// ── Meter stat (spent / remaining / ceiling) ───────────────────────────────────
+// ── KPI strip — unboxed divider-delimited numbers (~56px) ────────────────────
+
+interface KpiItem {
+  label: string;
+  value: string;
+  accent?: boolean;
+  danger?: boolean;
+}
+
+function KpiStrip({ items }: { items: KpiItem[] }) {
+  return (
+    <div
+      className="flex flex-wrap items-stretch"
+      role="group"
+      aria-label="Vault key metrics"
+    >
+      {items.map((item, i) => (
+        <div
+          key={item.label}
+          className="flex flex-col gap-1 px-4 py-3 min-w-[120px]"
+          style={{
+            borderLeft: i === 0 ? 'none' : '1px solid var(--metador-border)',
+          }}
+        >
+          <span
+            className="text-2xs font-medium uppercase tracking-widest"
+            style={{ color: 'var(--metador-muted)' }}
+          >
+            {item.label}
+          </span>
+          <span
+            className="text-2xl font-medium leading-none"
+            style={{
+              fontVariantNumeric: 'tabular-nums lining-nums',
+              color: item.danger
+                ? 'var(--metador-danger)'
+                : item.accent
+                  ? 'var(--metador-primary)'
+                  : 'var(--metador-text)',
+            }}
+          >
+            {item.value}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Meter stat (spent / remaining / ceiling) ──────────────────────────────────
 
 function MeterStat({
   label,
@@ -147,14 +209,19 @@ function MeterStat({
 }) {
   return (
     <div className="flex flex-col gap-1 min-w-0">
-      <span className="text-2xs uppercase tracking-widest text-muted truncate">
+      <span
+        className="text-2xs uppercase tracking-widest truncate"
+        style={{ color: 'var(--metador-muted)' }}
+      >
         {label}
       </span>
       <span
-        className="font-mono text-xs truncate"
+        className="text-xs truncate"
         style={{
           fontVariantNumeric: 'tabular-nums lining-nums',
-          color: accent ? 'var(--metador-primary)' : 'var(--metador-text)',
+          color: accent
+            ? 'var(--metador-primary)'
+            : 'var(--metador-text)',
         }}
       >
         {value}
@@ -163,11 +230,12 @@ function MeterStat({
   );
 }
 
-// ── Loading skeleton (reachable via ?loading=1) ────────────────────────────────
+// ── Loading skeleton ──────────────────────────────────────────────────────────
 
 function VaultDetailSkeleton() {
   return (
     <section aria-label="Loading vault" aria-busy="true" data-skeleton="true">
+      {/* Header */}
       <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-3">
           <Skeleton variant="rect" width="240px" height="32px" />
@@ -178,13 +246,22 @@ function VaultDetailSkeleton() {
           <Skeleton variant="rect" width="84px" height="32px" />
         </div>
       </div>
+      {/* KPI strip */}
+      <div className="mb-6 flex gap-4">
+        <Skeleton variant="rect" width="120px" height="56px" />
+        <Skeleton variant="rect" width="120px" height="56px" />
+        <Skeleton variant="rect" width="120px" height="56px" />
+      </div>
+      {/* Policy card */}
       <div className="mb-6">
         <Skeleton variant="rect" width="160px" height="16px" className="mb-3" />
-        <Skeleton variant="rect" height="160px" />
+        <Skeleton variant="rect" height="120px" />
       </div>
+      {/* Main grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 flex flex-col gap-6">
           <Skeleton variant="rect" height="120px" />
+          <Skeleton variant="rect" height="200px" />
         </div>
         <div className="flex flex-col gap-3">
           <Skeleton variant="rect" width="120px" height="16px" />
@@ -203,14 +280,10 @@ function VaultDetailContent() {
   const vaultId = params?.id ?? '';
   const baseVault = getMockVault(vaultId);
 
-  // Reachable loading state — the data surface's skeleton. Mock reads are
-  // synchronous; ?loading=1 forces the skeleton so design-review and the
-  // screenshot tooling can verify it. G1 flips this on the real chain read.
+  // ?loading=1 forces the skeleton for design-review and screenshot tooling.
   const loading = searchParams?.get('loading') === '1';
 
-  // Hidden owner-only outcome toggle (the red-team beat — DESIGN.md). ?revoke=
-  // abort|reject forces the failure path so it can be filmed live; default is
-  // the success flow. G1 derives the outcome from the real tx result.
+  // ?revoke=abort|reject forces failure paths for red-team filming.
   const revokeParam = searchParams?.get('revoke');
   const revokeOutcome =
     revokeParam === 'abort'
@@ -221,9 +294,6 @@ function VaultDetailContent() {
 
   const [depositModalOpen, setDepositModalOpen] = useState(false);
   const [revokeOpen, setRevokeOpen] = useState(false);
-  // Local revoke override — the mock state flip the demo flow drives. The real
-  // PTB lands in G1 (see RevokeDialog TODO); here a confirmed commit flips this
-  // and the page runs beats 2 (Commit) + 3 (Settle) declaratively.
   const [locallyRevoked, setLocallyRevoked] = useState(false);
   const [heatBloom, setHeatBloom] = useState(false);
 
@@ -233,21 +303,23 @@ function VaultDetailContent() {
 
   if (loading) return <VaultDetailSkeleton />;
 
-  // 404-style empty state
+  // 404 empty state
   if (!baseVault) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-4">
-        <p
-          className="text-2xl font-semibold text-muted"
-          style={{ fontFamily: 'var(--metador-font-display)' }}
-        >
+        <p className="text-2xl font-medium" style={{ color: 'var(--metador-muted)' }}>
           Vault not found
         </p>
-        <p className="text-sm text-faint">
+        <p className="text-sm" style={{ color: 'var(--metador-faint)' }}>
           The vault ID{' '}
           <span
-            className="font-mono text-xs bg-raised border border-border px-1.5 py-0.5 rounded-xs"
-            style={{ fontVariantNumeric: 'tabular-nums lining-nums' }}
+            className="text-xs px-1.5 py-0.5 rounded-xs"
+            style={{
+              fontFamily: 'var(--metador-font-code)',
+              backgroundColor: 'var(--metador-raised)',
+              border: '1px solid var(--metador-border)',
+              color: 'var(--metador-muted)',
+            }}
           >
             {vaultId.slice(0, 20)}…
           </span>{' '}
@@ -255,7 +327,8 @@ function VaultDetailContent() {
         </p>
         <Link
           href="/"
-          className="text-primary text-sm underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-xs"
+          className="text-sm underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-xs"
+          style={{ color: 'var(--metador-primary)' }}
         >
           Back to Marketplace
         </Link>
@@ -268,6 +341,15 @@ function VaultDetailContent() {
   const budgetFormatted = formatBaseUnits(vault.budget, vault.quoteDecimals, {
     maxFractionDigits: 2,
   });
+  const tvlFormatted = formatBaseUnits(vault.tvl, vault.quoteDecimals, {
+    maxFractionDigits: 2,
+  });
+  const pnlFormatted = formatBaseUnits(
+    vault.pnl30d < 0n ? -vault.pnl30d : vault.pnl30d,
+    vault.quoteDecimals,
+    { maxFractionDigits: 2 },
+  );
+  const pnlSign = vault.pnl30d >= 0n ? '+' : '−';
   const feed = buildFeed({ ...vault, status: isRevoked ? 'revoked' : vault.status });
 
   function handleDepositClick() {
@@ -275,9 +357,7 @@ function VaultDetailContent() {
     setDepositModalOpen(true);
   }
 
-  // Beat 2 (Commit) + 3 (Settle): on confirmed success flip local state, fire
-  // the single 520ms heat bloom, and let the declarative render desaturate the
-  // meter / disable actions / land the terminal feed row.
+  // Beat 2 (Commit) + 3 (Settle): flip local state, fire 520ms heat bloom.
   function handleCommitted() {
     setRevokeOpen(false);
     setLocallyRevoked(true);
@@ -288,11 +368,11 @@ function VaultDetailContent() {
 
   return (
     <section aria-labelledby="vault-heading">
-      {/* Header */}
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-2">
           <div className="relative flex flex-wrap items-center gap-3">
-            {/* Heat bloom — single 520ms warm-red pulse behind the badge */}
+            {/* Heat bloom — single 520ms warm-red pulse behind the badge (beat 2) */}
             <AnimatePresence>
               {heatBloom && (
                 <motion.span
@@ -308,8 +388,8 @@ function VaultDetailContent() {
             </AnimatePresence>
             <h1
               id="vault-heading"
-              className="relative text-2xl font-semibold text-text"
-              style={{ fontFamily: 'var(--metador-font-display)' }}
+              className="relative text-2xl font-medium"
+              style={{ color: 'var(--metador-text)' }}
             >
               {vault.name}
             </h1>
@@ -317,29 +397,42 @@ function VaultDetailContent() {
               <StatusBadge revoked={isRevoked} />
             </span>
           </div>
-          <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
+          <div className="flex flex-wrap items-center gap-2 text-sm" style={{ color: 'var(--metador-muted)' }}>
             <span>Led by</span>
             <AddressPill
               address={vault.leader}
               explorerHref={`https://suiscan.xyz/testnet/account/${vault.leader}`}
             />
-            <span className="text-faint">·</span>
+            <span style={{ color: 'var(--metador-faint)' }}>·</span>
             <span>
               <span
-                className="font-mono text-text"
-                style={{ fontVariantNumeric: 'tabular-nums lining-nums' }}
+                className="text-sm"
+                style={{
+                  fontVariantNumeric: 'tabular-nums lining-nums',
+                  color: 'var(--metador-text)',
+                }}
               >
                 {vault.followers}
               </span>{' '}
               followers
             </span>
+            <span style={{ color: 'var(--metador-faint)' }}>·</span>
+            <span
+              className="text-2xs uppercase tracking-widest px-2 py-0.5 rounded-xs"
+              style={{
+                border: '1px solid var(--metador-border)',
+                color: 'var(--metador-muted)',
+              }}
+            >
+              {vault.strategy}
+            </span>
           </div>
         </div>
 
-        {/* Action buttons — owner view exposes Revoke (the demo flow) */}
+        {/* Action buttons */}
         <div className="flex items-center gap-2">
           {isRevoked ? (
-            <span className="text-sm text-faint italic">
+            <span className="text-sm italic" style={{ color: 'var(--metador-faint)' }}>
               Actions disabled — vault revoked
             </span>
           ) : (
@@ -350,9 +443,8 @@ function VaultDetailContent() {
               <Button variant="ghost" size="sm" disabled>
                 Withdraw
               </Button>
-              {/* Trigger is muted danger — the arterial revoke red stays
-                  reserved for the actual moment (the confirm sweep + the
-                  revoked state), per DESIGN.md. */}
+              {/* Revoke trigger: muted danger, not the arterial revoke red.
+                  The full revoke red is reserved for the confirmed REVOKE moment. */}
               <Button
                 variant="danger"
                 size="sm"
@@ -365,15 +457,51 @@ function VaultDetailContent() {
         </div>
       </div>
 
-      {/* PolicyCard — the page hero. Full width, larger presence, sits above
-          the fold ahead of the secondary panels (DESIGN.md: safety made
-          visible; the policy card is Metador's signature element). */}
+      {/* ── KPI strip — unboxed, divider-delimited ────────────────────────── */}
+      <div
+        className="mb-6 rounded-md overflow-hidden"
+        style={{
+          border: '1px solid var(--metador-border)',
+          backgroundColor: 'var(--metador-surface)',
+        }}
+      >
+        <KpiStrip
+          items={[
+            {
+              label: `TVL (${vault.quoteSymbol})`,
+              value: tvlFormatted,
+            },
+            {
+              label: `30d PnL (${vault.quoteSymbol})`,
+              value: `${pnlSign}${pnlFormatted}`,
+              accent: vault.pnl30d >= 0n,
+              danger: vault.pnl30d < 0n,
+            },
+            {
+              label: `Budget ceiling (${vault.quoteSymbol})`,
+              value: budgetFormatted,
+            },
+            {
+              label: 'Followers',
+              value: String(vault.followers),
+            },
+          ]}
+        />
+      </div>
+
+      {/* ── PolicyCard — the page hero (DESIGN.md: safety made visible) ────── */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xs font-medium uppercase tracking-widest text-muted">
+          <h2
+            className="text-2xs font-medium uppercase tracking-widest"
+            style={{ color: 'var(--metador-muted)' }}
+          >
             Policy walls
           </h2>
-          <span className="text-2xs text-faint uppercase tracking-widest">
+          <span
+            className="text-2xs uppercase tracking-widest"
+            style={{ color: 'var(--metador-faint)' }}
+          >
             Enforced on-chain
           </span>
         </div>
@@ -388,21 +516,31 @@ function VaultDetailContent() {
         />
       </div>
 
+      {/* ── Main grid ────────────────────────────────────────────────────────
+          Left col (2/3): BudgetMeter hero + NAV chart
+          Right col (1/3): Activity feed                                     */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start">
-        {/* Left col: BudgetMeter (prominent, spring fill) + NAV */}
+        {/* Left */}
         <div className="lg:col-span-2 flex flex-col gap-6">
+          {/* BudgetMeter — prominent hero with stat breakdown */}
           <Card className="p-4">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xs font-medium uppercase tracking-widest text-muted">
+              <h2
+                className="text-2xs font-medium uppercase tracking-widest"
+                style={{ color: 'var(--metador-muted)' }}
+              >
                 Budget meter
               </h2>
               {isRevoked && (
-                <span className="text-2xs text-faint uppercase tracking-widest">
+                <span
+                  className="text-2xs uppercase tracking-widest"
+                  style={{ color: 'var(--metador-faint)' }}
+                >
                   Locked
                 </span>
               )}
             </div>
-            {/* Desaturate + lock the meter once revoked (beat 2). */}
+            {/* Desaturate + lock once revoked (beat 2 settle) */}
             <div
               style={{
                 filter: isRevoked ? 'grayscale(1)' : undefined,
@@ -416,9 +554,11 @@ function VaultDetailContent() {
                 quoteDecimals={vault.quoteDecimals}
                 quoteSymbol={vault.quoteSymbol}
               />
-              {/* Spent / remaining / ceiling breakdown — gives the meter
-                  real presence and reinforces the wall you can watch. */}
-              <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-border">
+              {/* Spent / remaining / ceiling breakdown */}
+              <div
+                className="grid grid-cols-3 gap-4 mt-4 pt-4"
+                style={{ borderTop: '1px solid var(--metador-border)' }}
+              >
                 <MeterStat
                   label="Spent"
                   value={`${formatBaseUnits(vault.budgetSpent, vault.quoteDecimals, { maxFractionDigits: 2 })} ${vault.quoteSymbol}`}
@@ -436,22 +576,28 @@ function VaultDetailContent() {
             </div>
           </Card>
 
-          {/* NAV — chart shell (lightweight-charts lands G1) */}
+          {/* NAV chart shell */}
           <Card className="p-4">
-            <h2 className="text-xs font-medium uppercase tracking-widest text-muted mb-3">
+            <h2
+              className="text-2xs font-medium uppercase tracking-widest mb-3"
+              style={{ color: 'var(--metador-muted)' }}
+            >
               Vault NAV — 30d
             </h2>
             <ChartShell label="NAV" aspect="2/1" />
           </Card>
         </div>
 
-        {/* Right col: Activity feed — staggered entrance */}
+        {/* Right: Activity feed — the rejections are the proof */}
         <div className="flex flex-col gap-3">
-          <h2 className="text-xs font-medium uppercase tracking-widest text-muted">
+          <h2
+            className="text-2xs font-medium uppercase tracking-widest"
+            style={{ color: 'var(--metador-muted)' }}
+          >
             Live activity
           </h2>
           <Card className="overflow-hidden">
-            <ul aria-label="Vault activity feed" className="divide-y divide-border/50">
+            <ul aria-label="Vault activity feed" className="divide-y" style={{ borderColor: 'var(--metador-border)' }}>
               <AnimatePresence initial>
                 {feed.map((entry, i) => (
                   <motion.div
@@ -475,7 +621,10 @@ function VaultDetailContent() {
                 ))}
               </AnimatePresence>
               {feed.length === 0 && (
-                <li className="px-4 py-8 text-center text-sm text-muted">
+                <li
+                  className="px-4 py-8 text-center text-sm"
+                  style={{ color: 'var(--metador-muted)' }}
+                >
                   No activity yet
                 </li>
               )}
@@ -484,7 +633,7 @@ function VaultDetailContent() {
         </div>
       </div>
 
-      {/* REVOKE flow (owner view) */}
+      {/* ── REVOKE flow ───────────────────────────────────────────────────── */}
       <RevokeDialog
         open={revokeOpen}
         vaultName={vault.name}
@@ -493,7 +642,7 @@ function VaultDetailContent() {
         forceOutcome={revokeOutcome}
       />
 
-      {/* Deposit modal stub */}
+      {/* ── Deposit modal stub ────────────────────────────────────────────── */}
       <Modal
         open={depositModalOpen}
         onClose={() => setDepositModalOpen(false)}
@@ -501,21 +650,34 @@ function VaultDetailContent() {
         description="Deposits are available in G1 — this is the shell."
       >
         <div className="p-6 flex flex-col gap-4">
-          <h2
-            className="text-lg font-semibold text-text"
-            style={{ fontFamily: 'var(--metador-font-display)' }}
-          >
+          <h2 className="text-lg font-medium" style={{ color: 'var(--metador-text)' }}>
             Deposits land in G1
           </h2>
-          <p className="text-sm text-muted leading-relaxed">
+          <p className="text-sm leading-relaxed" style={{ color: 'var(--metador-muted)' }}>
             This is the shell — deposit flow wires to{' '}
-            <span className="font-mono text-xs text-faint">keel_core</span> in
-            G1.
+            <span
+              className="text-xs px-1.5 py-0.5 rounded-xs"
+              style={{
+                fontFamily: 'var(--metador-font-code)',
+                backgroundColor: 'var(--metador-raised)',
+                border: '1px solid var(--metador-border)',
+                color: 'var(--metador-faint)',
+              }}
+            >
+              keel_core
+            </span>{' '}
+            in G1.
           </p>
-          {/* Risk disclosure (PRODUCT.md voice) */}
-          <div className="rounded-md border border-warn/30 bg-warn/5 px-4 py-3">
-            <p className="text-sm text-warn leading-relaxed">
-              <strong className="font-semibold">Risk disclosure:</strong> Funds
+          {/* Risk disclosure — always visible (CLAUDE.md §1 money safety) */}
+          <div
+            className="rounded-md px-4 py-3"
+            style={{
+              border: '1px solid rgba(255, 140, 0, 0.3)',
+              backgroundColor: 'var(--metador-tint-warn)',
+            }}
+          >
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--metador-warn)' }}>
+              <strong className="font-medium">Risk disclosure:</strong> Funds
               deposited into a vault are subject to trading losses up to the
               vault&apos;s configured budget ceiling. The on-chain policy walls
               cap your maximum exposure —{' '}
@@ -537,8 +699,8 @@ function VaultDetailContent() {
 }
 
 /**
- * Vault detail shell — Suspense boundary required by Next.js App Router for
- * useSearchParams() in a client component (the ?loading=1 skeleton hook).
+ * Vault detail — Suspense boundary required by Next.js App Router for
+ * useSearchParams() in a client component.
  */
 export default function VaultDetail() {
   return (

@@ -51,8 +51,9 @@ export interface RevokeDialogProps {
   forceOutcome?: Outcome;
 }
 
+// ENotOwner = code 7 (vault module) per docs/abort-codes.md.
 const ABORT_REASON =
-  'Revoke aborted on-chain (E_NOT_OWNER, code 35) — nothing changed.';
+  'Only the vault owner can revoke or reclaim. (E_NOT_OWNER, code 7) — nothing changed.';
 
 export function RevokeDialog({
   open,
@@ -122,14 +123,14 @@ export function RevokeDialog({
             Irreversible action
           </span>
           <h2
-            className="text-xl font-semibold text-text leading-tight"
-            style={{ fontFamily: 'var(--metador-font-display)' }}
+            className="text-xl font-medium leading-tight"
+            style={{ color: 'var(--metador-text)' }}
           >
             This cannot be undone.
           </h2>
           <p className="text-sm text-muted leading-relaxed">
             Revoking destroys the leader&apos;s{' '}
-            <span className="font-mono text-xs text-text">TradeCap</span> for{' '}
+            <span className="font-code text-xs text-text">TradeCap</span> for{' '}
             <span className="text-text font-medium">{vaultName}</span> on-chain.
             The leader loses all trading authority immediately and the
             capability cannot be recreated. Deposits remain yours to withdraw.

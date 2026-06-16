@@ -1,11 +1,11 @@
 /**
  * SiteFooter — §8.8 footer contract.
  *
- * Pattern transfer: oversized Fraunces "Metador" wordmark spanning full width,
- * pale paper top zone + dark base strip.
+ * Pattern transfer: oversized Inter "Metador" wordmark spanning full width,
+ * pale paper top zone + dark base strip (ADR-010: Inter everywhere, green identity).
  *
  * Structure:
- *   - Pale top zone (data-theme="light"): giant Fraunces "Metador" wordmark + brief tagline
+ *   - Pale top zone (data-theme="light"): giant Inter "Metador" wordmark + brief tagline
  *   - Dark base strip: MetadorMark + minimal links (Docs placeholder, GitHub placeholder)
  *     + "Built on Sui · DeepBook" caption
  *
@@ -22,7 +22,7 @@ export function SiteFooter() {
       {/*
        * ── Pale top zone ────────────────────────────────────────────────────
        * data-theme="light" flips the metador-* token ramp to the paper world.
-       * Giant Fraunces wordmark is the visual anchor (pattern transfer).
+       * Giant Inter wordmark is the visual anchor (pattern transfer, ADR-010).
        * clamp() for the wordmark: from ~3xl at 375px to well above 5xl at 1440.
        * We use clamp() directly here because this is a hero-scale display
        * element — no token large enough exists; this is the one explicit
@@ -41,23 +41,21 @@ export function SiteFooter() {
         }}
       >
         {/*
-         * Oversized wordmark — true full-bleed editorial anchor.
+         * Oversized Inter wordmark — full-bleed editorial anchor (ADR-010).
          * Intentionally escapes the 1200px content wrapper so the wordmark
          * runs edge-to-edge to the section's L/R padding at all viewports.
-         * clamp: ~80px at 375px, ~207px at 1440px (14.375vw × 1440 = 207).
-         * Raised from 14vw→20vw so glyphs reach the horizontal padding at 1440px.
          * fontSize is a one-off hero-scale display element — no token at this size.
+         * Inter at -0.04em tracking fills the section width at 1440px.
          */}
         <p
           aria-hidden="true"
           style={{
             fontFamily: 'var(--metador-font-display)',
             /*
-             * Full-bleed wordmark: scales from ~5rem at 375px to ~29vw at 1440px.
+             * Full-bleed wordmark: scales from ~5rem at 375px to fill viewport width.
              * No upper clamp cap — the vw unit drives it to fill the available
-             * section width at all viewports. Tested: at 1440px, 29vw ≈ 418px
-             * which Fraunces "Metador" with -0.04em tracking fills edge-to-padding.
-             * At 375px the floor (5rem = 80px) applies.
+             * section width at all viewports. Inter at -0.04em tracking fills
+             * edge-to-padding at 1440px. At 375px the floor (5rem = 80px) applies.
              */
             fontSize: 'clamp(5rem, 58vw, 100vw)',
             lineHeight: 1,

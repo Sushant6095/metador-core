@@ -88,28 +88,26 @@
   background: linear-gradient(transparent 0%, var(--metador-bg) 92%);
 }
 
-/* ── .metador-display — Fraunces editorial-sharp axis pinning (§4.2) ─────────
-   opsz:144 = max optical size → high-contrast editorial sharpness.
-   SOFT:0  = off → kills soft/rounded terminals.
-   WONK:0  = off → kills playful terminal wonk.
-   Used on all display headlines ≥4xl. Hero h1 gets weight:600 override. */
+/* ── .metador-display — Inter display treatment (ADR-010: green/Inter rebrand) ──
+   Inter has no custom variation axes (SOFT/WONK were Fraunces-only — removed).
+   Display headlines use tight tracking and semibold weight for hierarchy.
+   Used on all display headlines ≥2xl. Hero h1 gets the --hero variant. */
 .metador-display {
   font-family: var(--metador-font-display);
-  font-variation-settings: 'opsz' 144, 'SOFT' 0, 'WONK' 0;
-  font-weight: 560;
+  font-weight: var(--metador-weight-semibold);
   letter-spacing: -0.03em;
 }
 
 .metador-display--hero {
-  font-variation-settings: 'opsz' 144, 'SOFT' 0, 'WONK' 0;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  /* founder build-list #1: hero leading 0.95 (parity hero.h1Leading 0.95±0.05) */
-  line-height: 0.95;
+  font-family: var(--metador-font-display);
+  font-weight: var(--metador-weight-semibold);
+  letter-spacing: -0.04em;
+  /* Hero leading: tight, monumental — matches HF benchmark headline density */
+  line-height: 0.97;
 }
 
 /* ── .metador-eyebrow — §4.4 eyebrow treatment ───────────────────────────────
-   Replaces brass-colored eyebrows with faint+caps+tracking. */
+   Faint + caps + tracking. Never uses primary color for eyebrows (spec §3.4). */
 .metador-eyebrow {
   font-family: var(--metador-font-text);
   font-size: var(--metador-text-xs);

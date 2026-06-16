@@ -134,7 +134,7 @@ body {
   color: var(--metador-on-primary);
 }
 
-/* Brass focus ring on every keyboard-driven interaction (CLAUDE.md §4). */
+/* Mint focus ring on every keyboard-driven interaction (CLAUDE.md §4, ADR-010). */
 :focus-visible {
   outline: var(--metador-ring-width) solid var(--metador-ring);
   outline-offset: var(--metador-ring-offset);
@@ -158,7 +158,69 @@ body {
   }
 }
 
-/* ── StatBand — tabular mono numerals ─────────────────────────────────── */
+/* ── StatBand — tabular Inter numerals (ADR-010: Inter everywhere) ───────── */
 .stat-band-value {
   font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* ── Landing — section-specific styles (below the @theme block freeze) ───
+   These supplement the token system for landing surfaces only.
+   No raw hex — all values are token references.                           */
+
+/* Smooth-scroll anchor behaviour for in-page nav links.
+   Lenis takes over the kinetic scroll; this governs instant-jump fallback
+   (e.g. reduced-motion, server render, Lenis not yet mounted).
+   The global prefers-reduced-motion block above already forces
+   scroll-behavior:auto on that media query, so these never fight. */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Section world-flip base — dark is the default (no class needed).
+   [data-theme='light'] sections flip to the pale-green paper world.
+   The transition is a hard edge in normal document flow (choreography.md §6).
+   No crossfade, no overlap. */
+
+/* ── Landing nav pill — responsive max-width tightening on mobile ─────── */
+@media (max-width: 480px) {
+  /* On very small screens, pull the nav pill inset in to avoid clipping */
+  .site-nav-pill {
+    border-radius: var(--metador-radius-lg);
+  }
+}
+
+/* ── Tabular numerals — applied to any element that needs HL-style tabular
+   alignment without being inside a StatBand (e.g. inline stat callouts). */
+.tabular-nums {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* ── Mint glow pulse — one-shot attention bloom on the primary CTA.
+   Used by the hero CTA on page load (opacity/transform only). */
+@keyframes mint-glow-pulse {
+  0%   { box-shadow: var(--metador-glow-primary); }
+  50%  { box-shadow: 0 0 36px -2px rgba(var(--metador-primary-rgb), 0.65); }
+  100% { box-shadow: var(--metador-glow-primary); }
+}
+
+/* ── Section seam overrides (atmosphere.css §2.4 mint-tinted) ──────────── */
+/* The seam band already uses --metador-primary-rgb, so no override needed;
+   the token is already green. These comments record the live state. */
+
+/* ── whileInView reveal base (Motion handles the actual animation;
+   this ensures the initial hidden state never causes CLS on no-JS) ───── */
+@media (prefers-reduced-motion: no-preference) {
+  /* Motion's initial:{opacity:0} is set inline; this is a safety net
+     for any element that depends on a CSS-only reveal fallback. */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  [data-reveal='visible'] {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity var(--metador-duration-slow) var(--metador-ease-enter),
+      transform var(--metador-duration-slow) var(--metador-ease-enter);
+  }
 }

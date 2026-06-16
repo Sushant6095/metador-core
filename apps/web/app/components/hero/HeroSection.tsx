@@ -1,27 +1,26 @@
 'use client';
 
 /**
- * HeroSection — full-viewport graded dark composition (landing premium pass,
- * founder build-list #1). Caliber bar: hyperfoundation founder-shots — a
- * monumental editorial serif claim on an atmospheric dark field.
+ * HeroSection — full-viewport graded dark composition (landing premium pass).
+ * Caliber bar: hyperfoundation founder-shots — a monumental Inter claim on an
+ * atmospheric dark field in the green identity (ADR-010).
  *
  * Z-layers (back→front):
  *   z0: --metador-bg base
  *   z1: .metador-field atmosphere gradients
  *   z2: HeroComposition — full-bleed graded dark video/Spline SLOT
- *       (replaces the benched ArmatureSlot; founder asset swaps in there)
  *   z3: .metador-vignette-bottom — depth fog so type sits on calm ground
  *   z4: content column — center-anchored, vertically centered, monumental type
  *
- * Amber budget (≤2 brass per viewport, elevation-spec §3):
- *   - ONE headline accent word in brass (the verb "can't")
- *   - ONE CTA fill in brass (primary CTA)
+ * Green mint budget (≤2 primary per viewport, elevation-spec §3):
+ *   - ONE headline accent word in mint (the verb "can't")
+ *   - ONE CTA fill in mint (primary CTA)
  *   - Everything else: --metador-text / --metador-muted / --metador-faint
  *
- * Hero type (founder build-list #1):
- *   - Fraunces clamp(64px, 9vw, 128px), line-height 0.95, tracking -0.03em
- *   - white-dominant; brass on at most one word
- *   - eyebrow caps; two CTAs (brass primary + ghost secondary)
+ * Hero type:
+ *   - Inter clamp(3rem, 5.6vw, 5.5rem), line-height 0.97, tracking -0.04em
+ *   - white-dominant; mint on at most one word
+ *   - eyebrow caps; two CTAs (mint primary + ghost secondary)
  */
 
 import { motion, useReducedMotion } from 'motion/react';
@@ -103,8 +102,7 @@ export function HeroSection() {
             Vault layer · DeepBook on Sui
           </motion.p>
 
-          {/* Main headline — Fraunces editorial-sharp, monumental scale
-              founder #1: clamp(64px, 9vw, 128px), line-height 0.95, -0.03em */}
+          {/* Main headline — Inter, monumental scale, tight leading */}
           <motion.h1
             id="hero-heading"
             className="metador-display--hero"
@@ -113,24 +111,23 @@ export function HeroSection() {
             transition={revealTransition(0.1)}
             style={{
               fontFamily: 'var(--metador-font-display)',
-              // founder #1 size band kept (parity 64–129); tuned so the claim
-              // is ~3 lines and fully visible inside 100vh at 1440. The 900px
-              // parent gives the measure; the claim wraps to 3 lines, not 6.
+              // Size band: 3rem floor at 375px, scales to 5.5rem at 1440px.
+              // 900px max-width parent keeps the claim to ~3 lines.
               fontSize: 'clamp(3rem, 5.6vw, 5.5rem)',
-              lineHeight: 0.96,
-              letterSpacing: '-0.03em',
+              lineHeight: 0.97,
+              letterSpacing: '-0.04em',
               color: 'var(--metador-text)',
               marginBottom: 'var(--metador-space-8)',
               maxWidth: '100%',
             }}
           >
             Vaults that{' '}
-            {/* ONE brass word — the load-bearing verb (spec §3.3) */}
+            {/* ONE mint accent word — the load-bearing verb (spec §3.3, green identity) */}
             <span style={{ color: 'var(--metador-primary)' }}>can&apos;t</span>
             {' '}run off with your money.
           </motion.h1>
 
-          {/* Sub-line — Geist, muted, max 52ch */}
+          {/* Sub-line — Inter, muted, max 52ch */}
           <motion.p
             initial={hiddenState}
             animate={visibleState}
@@ -160,7 +157,7 @@ export function HeroSection() {
               gap: 'var(--metador-space-3)',
             }}
           >
-            {/* Primary CTA — brass fill (ONE brass CTA per budget §3) */}
+            {/* Primary CTA — mint fill (ONE mint CTA per budget §3) */}
             <a
               href={APP_URL}
               style={{
@@ -191,7 +188,7 @@ export function HeroSection() {
               Launch App
             </a>
 
-            {/* Secondary CTA — ghost (NOT brass; spec §3: at most 2 brass per viewport,
+            {/* Secondary CTA — ghost (NOT mint; spec §3: at most 2 primary per viewport,
                 both already used: accent word + primary CTA fill) */}
             <a
               href="/docs"

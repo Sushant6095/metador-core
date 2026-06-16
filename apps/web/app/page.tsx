@@ -5,23 +5,26 @@
  * Section order (landing premium pass, founder build-list + choreography.md §8).
  * World rhythm = dark → pale → dark → pale → dark(×3) → pale → dark(×2) → pale→dark:
  *   1  Nav            — floating pill (fixed, over the hero)
- *   2  Hero           — dark, full-viewport graded composition + monumental serif
+ *   2  Hero           — dark, full-viewport graded composition + monumental Inter claim
  *   3  Flagship App   — PALE; real screenshot of our marketplace in a dark frame
  *   4  Custody problem — dark; hook/problem statement
  *   5  Four Walls     — PALE; four chain-enforced walls
  *   6  Activity Feed  — dark surface; live feed + budget meter
- *   7  Stat Band      — dark; count-up on enter, tabular mono
+ *   7  Stat Band      — dark; count-up on enter, tabular Inter numerals
  *   8  Stack          — dark; original isometric four-layer diagram
  *   9  Value props    — PALE; Maya + Leo
  *   10 Red-team       — dark, ramps toward --metador-revoke
  *   11 Builders band  — dark surface
  *   12 Waitlist       — PALE → dark base footer
- *      Footer         — pale top + dark base (giant Fraunces wordmark)
+ *      Footer         — pale top + dark base (giant Inter wordmark)
  *
- * All client interactivity lives in child 'use client' components.
+ * LenisProvider (client) wraps main — enables smooth scroll for the full
+ * landing surface, no-ops under prefers-reduced-motion.
+ * All other client interactivity lives in child 'use client' components.
  * No motion/3D imports in this server file.
  */
 
+import { LenisProvider } from './components/smooth-scroll/LenisProvider';
 import { HeroSection } from './components/hero/HeroSection';
 import { FlagshipAppSection } from './components/flagship-app/FlagshipAppSection';
 import { CustodyProblemSection } from './components/custody-problem/CustodyProblemSection';
@@ -40,8 +43,10 @@ export default function HomePage() {
   return (
     <>
       <SiteNav />
+      {/* LenisProvider enables smooth scroll; no-ops under prefers-reduced-motion */}
+      <LenisProvider>
       <main id="main-content">
-        {/* Hero — 100vh, dark graded composition, monumental serif claim */}
+        {/* Hero — 100vh, dark graded composition, monumental Inter claim */}
         <HeroSection />
 
         {/* Flagship App — PALE world-flip; real product screenshot, dark frame */}
@@ -74,6 +79,7 @@ export default function HomePage() {
         {/* Waitlist — PALE (data-theme="light" inside WaitlistSection) */}
         <WaitlistSection />
       </main>
+      </LenisProvider>
 
       {/* Footer — pale top + dark base (world ramp inside SiteFooter) */}
       <SiteFooter />

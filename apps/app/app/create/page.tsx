@@ -7,12 +7,17 @@ import { DEEPBOOK_TESTNET } from '@metador/deepbook';
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type StrategyKind = 'delegate' | 'dca';
+type ExpiryOption = '24h' | '7d' | '30d';
 
 interface WizardState {
   strategy: StrategyKind | null;
   pool: string;
   budgetRaw: string;
-  expiry: '24h' | '7d' | '30d';
+  expiry: ExpiryOption;
+}
+
+interface ValidationErrors {
+  budget?: string;
 }
 
 const EMPTY_WIZARD: WizardState = {
@@ -27,14 +32,32 @@ const POOLS = [
   { label: 'DEEP / SUI', value: 'DEEP/SUI', id: DEEPBOOK_TESTNET.POOL_DEEP_SUI },
 ];
 
-const EXPIRY_OPTIONS: { label: string; value: WizardState['expiry'] }[] = [
+const EXPIRY_OPTIONS: { label: string; value: ExpiryOption }[] = [
   { label: '24 hours', value: '24h' },
   { label: '7 days', value: '7d' },
   { label: '30 days', value: '30d' },
 ];
 
-function expiryToMs(expiry: WizardState['expiry']): number {
-  const ms: Record<WizardState['expiry'], number> = {
+const STRATEGY_CONFIGS: Record<
+  StrategyKind,
+  { title: string; description: string; tag: string }
+> = {
+  delegate: {
+    title: 'Delegate',
+    description:
+      'Grant the leader a mandate to trade on your behalf within the policy walls. The leader acts autonomously; your ceiling limits every trade.',
+    tag: 'Active trading',
+  },
+  dca: {
+    title: 'DCA',
+    description:
+      'Dollar-cost average into a pool on a fixed schedule. The cranker executes each tick; your budget ceiling caps total spend.',
+    tag: 'Scheduled',
+  },
+};
+
+function expiryToMs(expiry: ExpiryOption): number {
+  const ms: Record<ExpiryOption, number> = {
     '24h': 24 * 60 * 60 * 1000,
     '7d': 7 * 24 * 60 * 60 * 1000,
     '30d': 30 * 24 * 60 * 60 * 1000,
@@ -44,6 +67,14 @@ function expiryToMs(expiry: WizardState['expiry']): number {
 
 function poolQuoteSymbol(pool: string): 'SUI' | 'DBUSDC' {
   return pool === 'DEEP/SUI' ? 'SUI' : 'DBUSDC';
+}
+
+function validateBudget(raw: string): string | undefined {
+  if (raw === '') return 'Budget ceiling is required.';
+  const n = Number(raw);
+  if (isNaN(n) || n <= 0) return 'Enter a positive number.';
+  if (n > 100_000) return 'Ceiling exceeds 100,000. Reduce for testnet safety.';
+  return undefined;
 }
 
 // ── Step 1: Strategy selection ────────────────────────────────────────────────
@@ -57,21 +88,7 @@ function StrategyCard({
   selected: boolean;
   onSelect: () => void;
 }) {
-  const configs = {
-    delegate: {
-      title: 'Delegate',
-      description:
-        'Grant the leader a mandate to trade on your behalf within the policy walls. The leader acts autonomously; your ceiling limits every trade.',
-      tag: 'Active trading',
-    },
-    dca: {
-      title: 'DCA',
-      description:
-        'Dollar-cost average into a pool on a fixed schedule. The cranker executes each tick; your budget ceiling caps total spend.',
-      tag: 'Scheduled',
-    },
-  };
-  const { title, description, tag } = configs[kind];
+  const { title, description, tag } = STRATEGY_CONFIGS[kind];
 
   return (
     <button
@@ -80,32 +97,46 @@ function StrategyCard({
       aria-pressed={selected}
       className={[
         'w-full text-left rounded-md border p-4 flex flex-col gap-2',
-        'transition-[background-color,border-color,color] duration-(--metador-duration-fast)',
+        'transition-[background-color,border-color] duration-(--metador-duration-fast)',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg',
         selected
-          ? 'border-primary bg-primary/5'
+          ? 'border-primary bg-raised'
           : 'border-border bg-surface hover:border-muted hover:bg-raised',
       ].join(' ')}
     >
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <span
           className={[
-            'text-base font-semibold',
+            'text-base font-medium',
             selected ? 'text-primary' : 'text-text',
           ].join(' ')}
-          style={{ fontFamily: 'var(--metador-font-display)' }}
         >
           {title}
         </span>
-        <span className="text-2xs font-medium uppercase tracking-widest text-muted border border-border rounded-xs px-1.5 py-0.5">
+        <span className="text-2xs font-medium uppercase tracking-widest text-muted border border-border rounded-xs px-1.5 py-0.5 shrink-0">
           {tag}
         </span>
       </div>
       <p className="text-sm text-muted leading-relaxed">{description}</p>
       {selected && (
-        <div className="flex items-center gap-1.5 text-xs text-primary font-medium mt-1">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-            <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <div
+          className="flex items-center gap-1.5 text-2xs text-primary font-medium mt-1 uppercase tracking-widest"
+          aria-hidden="true"
+        >
+          <svg
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M1.5 5l2.5 2.5 4.5-4.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
           Selected
         </div>
@@ -118,18 +149,24 @@ function StrategyCard({
 
 function PolicyWallsStep({
   state,
+  errors,
   onChange,
+  onBlurBudget,
 }: {
   state: WizardState;
+  errors: ValidationErrors;
   onChange: (next: WizardState) => void;
+  onBlurBudget: () => void;
 }) {
+  const quoteSymbol = poolQuoteSymbol(state.pool);
+
   return (
     <div className="flex flex-col gap-6">
       {/* Wall 1: Pool scope */}
       <div className="flex flex-col gap-2">
         <label
           htmlFor="create-pool-select"
-          className="text-xs font-medium uppercase tracking-widest text-muted"
+          className="text-2xs font-medium uppercase tracking-widest text-muted"
         >
           Wall 1 — Scope (pool)
         </label>
@@ -137,7 +174,11 @@ function PolicyWallsStep({
           id="create-pool-select"
           value={state.pool}
           onChange={(e) => onChange({ ...state, pool: e.target.value })}
-          className="w-full bg-raised border border-border rounded-sm px-3 py-2 text-sm text-text font-mono focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg transition-colors duration-(--metador-duration-fast)"
+          className="w-full bg-raised border border-border rounded-sm px-3 py-2 text-sm text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg transition-colors duration-(--metador-duration-fast)"
+          style={{
+            fontFamily: 'var(--metador-font-mono)',
+            fontVariantNumeric: 'tabular-nums lining-nums',
+          }}
         >
           {POOLS.map((p) => (
             <option key={p.value} value={p.value}>
@@ -146,7 +187,7 @@ function PolicyWallsStep({
           ))}
         </select>
         <p className="text-xs text-faint">
-          The vault can only trade this pool. The scope wall is enforced on-chain.
+          The vault can only trade this pool. Scope is enforced on-chain.
         </p>
       </div>
 
@@ -154,9 +195,9 @@ function PolicyWallsStep({
       <div className="flex flex-col gap-2">
         <label
           htmlFor="create-budget-input"
-          className="text-xs font-medium uppercase tracking-widest text-muted"
+          className="text-2xs font-medium uppercase tracking-widest text-muted"
         >
-          Wall 2 — Budget ceiling ({poolQuoteSymbol(state.pool)})
+          Wall 2 — Budget ceiling ({quoteSymbol})
         </label>
         <div className="relative">
           <input
@@ -165,26 +206,74 @@ function PolicyWallsStep({
             min="0"
             step="any"
             value={state.budgetRaw}
-            onChange={(e) => onChange({ ...state, budgetRaw: e.target.value })}
+            onChange={(e) =>
+              onChange({ ...state, budgetRaw: e.target.value })
+            }
+            onBlur={onBlurBudget}
             placeholder="e.g. 1000"
-            className="w-full bg-raised border border-border rounded-sm px-3 py-2 pr-20 text-sm text-text font-mono focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg transition-colors duration-(--metador-duration-fast) [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            aria-describedby={
+              errors.budget ? 'budget-error' : 'budget-hint'
+            }
+            aria-invalid={errors.budget !== undefined}
+            className={[
+              'w-full bg-raised border rounded-sm px-3 py-2 pr-20 text-sm text-text',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg',
+              'transition-colors duration-(--metador-duration-fast)',
+              '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
+              errors.budget ? 'border-danger' : 'border-border',
+            ].join(' ')}
+            style={{
+              fontFamily: 'var(--metador-font-mono)',
+              fontVariantNumeric: 'tabular-nums lining-nums',
+            }}
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-faint pointer-events-none">
-            {poolQuoteSymbol(state.pool)}
+          <span
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-faint pointer-events-none"
+            style={{
+              fontFamily: 'var(--metador-font-mono)',
+            }}
+          >
+            {quoteSymbol}
           </span>
         </div>
-        <p className="text-xs text-faint">
-          Maximum the leader can spend across all trades. Enforced by the on-chain
-          policy — cannot be raised without revoking and recreating.
-        </p>
+        {errors.budget ? (
+          <p
+            id="budget-error"
+            role="alert"
+            className="text-xs text-danger flex items-center gap-1.5"
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              aria-hidden="true"
+              className="shrink-0"
+            >
+              <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.5" />
+              <path
+                d="M6 3.5v3M6 8.5v.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+            {errors.budget}
+          </p>
+        ) : (
+          <p id="budget-hint" className="text-xs text-faint">
+            Maximum the leader can spend across all trades. Cannot be raised
+            without revoking and recreating.
+          </p>
+        )}
       </div>
 
       {/* Wall 3: Expiry */}
       <div className="flex flex-col gap-2">
-        <label className="text-xs font-medium uppercase tracking-widest text-muted">
+        <span className="text-2xs font-medium uppercase tracking-widest text-muted">
           Wall 3 — Expiry
-        </label>
-        <div className="flex gap-2 flex-wrap">
+        </span>
+        <div role="group" aria-label="Expiry duration" className="flex gap-2 flex-wrap">
           {EXPIRY_OPTIONS.map((opt) => (
             <button
               key={opt.value}
@@ -192,10 +281,11 @@ function PolicyWallsStep({
               onClick={() => onChange({ ...state, expiry: opt.value })}
               aria-pressed={state.expiry === opt.value}
               className={[
-                'px-3 py-1.5 rounded-sm text-sm font-medium border transition-colors duration-(--metador-duration-fast)',
+                'px-3 py-1.5 rounded-sm text-sm border',
+                'transition-colors duration-(--metador-duration-fast)',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg',
                 state.expiry === opt.value
-                  ? 'border-primary bg-primary/10 text-primary'
+                  ? 'border-primary text-primary bg-raised'
                   : 'border-border bg-raised text-muted hover:border-muted hover:text-text',
               ].join(' ')}
             >
@@ -204,26 +294,36 @@ function PolicyWallsStep({
           ))}
         </div>
         <p className="text-xs text-faint">
-          After expiry the vault automatically becomes inoperable. The leader
-          cannot extend it.
+          After expiry the vault becomes inoperable. The leader cannot extend it.
         </p>
       </div>
 
-      {/* Wall 4: Revocable — always on, shown as fact */}
-      <div className="flex flex-col gap-2 p-3 rounded-md bg-raised border border-border">
-        <div className="flex items-center gap-2">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" className="text-primary shrink-0">
-            <path d="M2 7s1.5-4 5-4 5 4 5 4-1.5 4-5 4-5-4-5-4z" stroke="currentColor" strokeWidth="1.5" />
-            <circle cx="7" cy="7" r="1.5" fill="currentColor" />
-          </svg>
-          <span className="text-xs font-medium uppercase tracking-widest text-muted">
+      {/* Wall 4: Revocable — always on, shown as structural fact */}
+      <div className="flex gap-3 p-3 rounded-md bg-raised border border-border">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 14 14"
+          fill="none"
+          aria-hidden="true"
+          className="text-primary shrink-0 mt-0.5"
+        >
+          <path
+            d="M2 7s1.5-4 5-4 5 4 5 4-1.5 4-5 4-5-4-5-4z"
+            stroke="currentColor"
+            strokeWidth="1.5"
+          />
+          <circle cx="7" cy="7" r="1.5" fill="currentColor" />
+        </svg>
+        <div>
+          <span className="text-2xs font-medium uppercase tracking-widest text-muted">
             Wall 4 — Revocable (always on)
           </span>
+          <p className="text-xs text-faint mt-1">
+            You can revoke the leader&apos;s capability in one click at any time.
+            Non-negotiable — it is the depositor&apos;s ultimate guarantee.
+          </p>
         </div>
-        <p className="text-xs text-faint">
-          You can revoke the leader&apos;s capability in one click at any time. This
-          is non-negotiable — it is the depositor&apos;s ultimate safety guarantee.
-        </p>
       </div>
     </div>
   );
@@ -237,13 +337,13 @@ function ReviewStep({ state }: { state: WizardState }) {
     state.budgetRaw !== '' && Number(state.budgetRaw) > 0
       ? state.budgetRaw
       : '—';
-
   const expiresAtMs = expiryToMs(state.expiry);
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="p-3 rounded-md bg-raised border border-border flex flex-col gap-1">
-        <span className="text-xs font-medium uppercase tracking-widest text-muted">
+      {/* Strategy row */}
+      <div className="flex items-center justify-between border-b border-border pb-3">
+        <span className="text-2xs font-medium uppercase tracking-widest text-muted">
           Strategy
         </span>
         <span className="text-sm text-text font-medium">
@@ -251,9 +351,9 @@ function ReviewStep({ state }: { state: WizardState }) {
         </span>
       </div>
 
-      {/* Live PolicyCard from chosen values */}
+      {/* Live PolicyCard */}
       <div>
-        <h2 className="text-xs font-medium uppercase tracking-widest text-muted mb-3">
+        <h2 className="text-2xs font-medium uppercase tracking-widest text-muted mb-3">
           Policy preview
         </h2>
         <PolicyCard
@@ -267,87 +367,100 @@ function ReviewStep({ state }: { state: WizardState }) {
       </div>
 
       <p className="text-xs text-faint leading-relaxed">
-        Review the policy card above — this is exactly what will be recorded on
-        Sui. Once signed, the walls cannot be softened without revoking and
-        recreating the vault.
+        This is exactly what will be recorded on Sui. Once signed, the walls
+        cannot be softened without revoking and recreating the vault.
       </p>
 
-      {/* Disabled sign button (G1) */}
-      <Button variant="primary" size="md" disabled className="w-full sm:w-auto">
-        Sign &amp; create (G1)
-      </Button>
-      <p className="text-xs text-faint -mt-4">
-        On-chain creation wires to{' '}
-        <span className="font-mono">keel_core</span> in G1.
-      </p>
+      {/* CTA — disabled for G1 */}
+      <div className="flex flex-col gap-2">
+        <Button variant="primary" size="md" disabled className="w-full sm:w-auto">
+          Sign &amp; create (G1)
+        </Button>
+        <p className="text-xs text-faint">
+          On-chain creation wires to{' '}
+          <span className="font-code text-xs">keel_core</span> in G1.
+        </p>
+      </div>
     </div>
   );
 }
 
-// ── Wizard steps indicator ────────────────────────────────────────────────────
+// ── Stepper ───────────────────────────────────────────────────────────────────
+
+type StepValue = '1' | '2' | '3';
 
 interface StepDef {
-  value: '1' | '2' | '3';
+  value: StepValue;
   label: string;
 }
 
 const WIZARD_STEPS: StepDef[] = [
-  { value: '1', label: '1. Strategy' },
-  { value: '2', label: '2. Policy walls' },
-  { value: '3', label: '3. Review & sign' },
+  { value: '1', label: 'Strategy' },
+  { value: '2', label: 'Policy walls' },
+  { value: '3', label: 'Review & sign' },
 ];
 
 /**
- * Stepper indicator — renders as a list with aria-current="step" on the
- * active step. This is NOT a tablist: the create wizard does not allow free
- * tab selection; forward progress requires explicit "Continue" clicks.
- * Completed steps are clickable only to go back (implemented in step content).
+ * Stepper — NOT a tablist. Forward progress requires explicit "Continue" clicks.
+ * Completed steps are clickable to go back. aria-current="step" on active.
  */
 function WizardStepper({
   currentStep,
   onBack,
 }: {
-  currentStep: '1' | '2' | '3';
-  onBack: (step: '1' | '2' | '3') => void;
+  currentStep: StepValue;
+  onBack: (step: StepValue) => void;
 }) {
+  const current = parseInt(currentStep);
+
   return (
     <nav aria-label="Vault creation steps" className="mb-8">
-      <ol
-        role="list"
-        className="flex items-end gap-0 border-b border-border relative"
-      >
-        {WIZARD_STEPS.map((s) => {
+      <ol role="list" className="flex items-end border-b border-border">
+        {WIZARD_STEPS.map((s, i) => {
+          const stepNum = parseInt(s.value);
           const isCurrent = s.value === currentStep;
-          const isPast = parseInt(s.value) < parseInt(currentStep);
+          const isPast = stepNum < current;
+
           return (
-            <li key={s.value}>
+            <li key={s.value} className="flex items-end gap-0">
+              {i > 0 && (
+                <span
+                  className="mb-2.5 mx-2 text-2xs text-faint"
+                  aria-hidden="true"
+                >
+                  /
+                </span>
+              )}
               {isPast ? (
                 <button
                   type="button"
                   onClick={() => onBack(s.value)}
-                  aria-current={undefined}
                   className={[
-                    'relative px-4 py-2 text-sm font-medium',
-                    'transition-colors duration-(--metador-duration-fast)',
-                    'text-muted hover:text-text',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg',
-                    'rounded-t-xs',
+                    'relative px-1 pb-2.5 text-sm text-muted',
+                    'hover:text-text transition-colors duration-(--metador-duration-fast)',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg rounded-xs',
                   ].join(' ')}
                 >
+                  <span className="text-2xs uppercase tracking-widest mr-1.5 text-faint">
+                    {s.value}.
+                  </span>
                   {s.label}
                 </button>
               ) : (
                 <span
                   aria-current={isCurrent ? 'step' : undefined}
                   className={[
-                    'relative inline-flex px-4 py-2 text-sm font-medium select-none',
-                    isCurrent ? 'text-primary' : 'text-faint',
+                    'relative inline-flex items-center px-1 pb-2.5 text-sm select-none',
+                    isCurrent ? 'text-primary font-medium' : 'text-faint',
                   ].join(' ')}
                 >
+                  <span className="text-2xs uppercase tracking-widest mr-1.5 opacity-70">
+                    {s.value}.
+                  </span>
                   {s.label}
                   {isCurrent && (
                     <span
-                      className="absolute bottom-[-1px] left-0 right-0 h-[2px]"
+                      className="absolute bottom-[-1px] left-0 right-0 h-[2px] rounded-full"
                       style={{ backgroundColor: 'var(--metador-primary)' }}
                       aria-hidden="true"
                     />
@@ -365,33 +478,60 @@ function WizardStepper({
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function Create() {
-  const [step, setStep] = useState<'1' | '2' | '3'>('1');
+  const [step, setStep] = useState<StepValue>('1');
   const [wizard, setWizard] = useState<WizardState>(EMPTY_WIZARD);
+  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [budgetTouched, setBudgetTouched] = useState(false);
 
   const canAdvanceStep1 = wizard.strategy !== null;
-  const canAdvanceStep2 =
-    wizard.pool !== '' &&
-    wizard.budgetRaw !== '' &&
-    Number(wizard.budgetRaw) > 0;
+
+  function handleBudgetBlur() {
+    setBudgetTouched(true);
+    setErrors({ ...errors, budget: validateBudget(wizard.budgetRaw) });
+  }
+
+  function handleAdvanceStep2() {
+    const budgetError = validateBudget(wizard.budgetRaw);
+    setBudgetTouched(true);
+    if (budgetError) {
+      setErrors({ budget: budgetError });
+      return;
+    }
+    setErrors({});
+    setStep('3');
+  }
+
+  const showBudgetError = budgetTouched
+    ? errors.budget
+    : undefined;
 
   return (
     <section aria-labelledby="create-heading">
-      <h1
-        id="create-heading"
-        className="text-2xl font-semibold text-text mb-6"
-        style={{ fontFamily: 'var(--metador-font-display)' }}
-      >
-        Create Vault
-      </h1>
+      {/* Page header */}
+      <div className="mb-6">
+        <h1
+          id="create-heading"
+          className="text-2xl font-semibold text-text"
+        >
+          Create Vault
+        </h1>
+        <p className="text-sm text-muted mt-1 leading-relaxed">
+          Set the four on-chain policy walls — scope, budget, expiry, revocability.
+        </p>
+      </div>
 
-      {/* Steps indicator — stepper pattern, not tablist */}
+      {/* Stepper */}
       <WizardStepper
         currentStep={step}
-        onBack={(s) => setStep(s)}
+        onBack={(s) => {
+          setStep(s);
+          setErrors({});
+          setBudgetTouched(false);
+        }}
       />
 
       <div className="max-w-xl">
-        {/* Step 1 */}
+        {/* Step 1 — Strategy */}
         {step === '1' && (
           <div className="flex flex-col gap-6">
             <p className="text-sm text-muted leading-relaxed">
@@ -402,7 +542,9 @@ export default function Create() {
               <StrategyCard
                 kind="delegate"
                 selected={wizard.strategy === 'delegate'}
-                onSelect={() => setWizard((w) => ({ ...w, strategy: 'delegate' }))}
+                onSelect={() =>
+                  setWizard((w) => ({ ...w, strategy: 'delegate' }))
+                }
               />
               <StrategyCard
                 kind="dca"
@@ -410,6 +552,11 @@ export default function Create() {
                 onSelect={() => setWizard((w) => ({ ...w, strategy: 'dca' }))}
               />
             </div>
+            {!canAdvanceStep1 && (
+              <p className="text-xs text-faint" aria-live="polite">
+                Select a strategy to continue.
+              </p>
+            )}
             <Button
               variant="primary"
               size="md"
@@ -417,36 +564,41 @@ export default function Create() {
               onClick={() => setStep('2')}
               className="self-start"
             >
-              Continue to policy walls →
+              Continue to policy walls
             </Button>
           </div>
         )}
 
-        {/* Step 2 */}
+        {/* Step 2 — Policy walls */}
         {step === '2' && (
           <div className="flex flex-col gap-6">
-            <PolicyWallsStep state={wizard} onChange={setWizard} />
+            <PolicyWallsStep
+              state={wizard}
+              errors={{ budget: showBudgetError }}
+              onChange={(next) => {
+                setWizard(next);
+                if (budgetTouched) {
+                  setErrors({ budget: validateBudget(next.budgetRaw) });
+                }
+              }}
+              onBlurBudget={handleBudgetBlur}
+            />
             <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setStep('1')}
-              >
-                ← Back
+              <Button variant="ghost" size="sm" onClick={() => setStep('1')}>
+                Back
               </Button>
               <Button
                 variant="primary"
                 size="md"
-                disabled={!canAdvanceStep2}
-                onClick={() => setStep('3')}
+                onClick={handleAdvanceStep2}
               >
-                Review &amp; sign →
+                Review &amp; sign
               </Button>
             </div>
           </div>
         )}
 
-        {/* Step 3 */}
+        {/* Step 3 — Review */}
         {step === '3' && (
           <div className="flex flex-col gap-6">
             <ReviewStep state={wizard} />
@@ -456,7 +608,7 @@ export default function Create() {
               onClick={() => setStep('2')}
               className="self-start"
             >
-              ← Back to policy walls
+              Back to policy walls
             </Button>
           </div>
         )}

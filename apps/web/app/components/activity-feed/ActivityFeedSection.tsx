@@ -164,14 +164,8 @@ export function ActivityFeedSection() {
             transition={{ duration: DURATIONS_S.slow, ease: EASE_ENTER }}
           >
             <p
-              style={{
-                fontFamily: 'var(--metador-font-text)',
-                fontSize: 'var(--metador-text-xs)',
-                color: 'var(--metador-primary)',
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                marginBottom: 'var(--metador-space-2)',
-              }}
+              className="metador-eyebrow"
+              style={{ marginBottom: 'var(--metador-space-2)' }}
             >
               Live activity
             </p>

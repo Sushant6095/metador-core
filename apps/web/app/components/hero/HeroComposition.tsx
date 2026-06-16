@@ -1,27 +1,19 @@
 'use client';
 
 /**
- * HeroComposition — full-viewport graded dark video/Spline SLOT for the hero
- * (landing premium pass, founder build-list #1).
+ * HeroComposition — full-viewport graded dark video/Spline SLOT for the hero.
+ * ADR-010 green identity: mint radials replace the old brass radials.
  *
- * This replaces the benched brass armature (ArmatureScene/Slot/Poster, kept
- * on disk). It is a graded dark COMPOSITION that reads expensive at first
- * paint and is ready to swap in a founder-supplied asset:
+ * Structure (back→front):
+ *   - data-hero-slot="poster" swap-in surface (video/Spline goes here).
+ *   - Deep-slate base grade: radial wash, not a flat slab.
+ *   - Layered mint radials from --metador-primary-rgb at low alpha (atmosphere).
+ *     Alphas tuned for mint-on-dark to avoid blowout (lighter hue = lower alpha).
+ *   - HeroField — living mint metaballs (transform/opacity, reduced-motion=static).
+ *   - .metador-grain (layout.tsx) adds slate tooth above all layers.
+ *   - Bottom vignette (in HeroSection) so type sits on calm ground.
  *
- *   - data-hero-slot="poster" container, position:absolute inset:0, holds the
- *     swap-in surface. When a founder asset lands, drop a <video> (poster +
- *     muted/loop/playsInline) or a lazy <Spline> here; the gradient grade and
- *     vignette already frame it.
- *   - Layered radial gradients from --metador-primary-rgb at low alpha over the
- *     deep slate base (atmosphere), then a living <HeroField/> — drifting brass
- *     metaballs that glow-merge (transform/opacity only, reduced-motion =
- *     static). This is the Metador-brand match for the benchmark's morphing hero
- *     (founder parity directive, 2026-06-14).
- *   - The page-level .metador-grain (layout.tsx) gives the slate tooth on top.
- *   - Bottom vignette (in HeroSection) so the type sits on calm ground.
- *
- * No hue shift, luminosity only (DESIGN.md #motion). No WebGL, no Three.js —
- * pure CSS grade, so first paint is the composition (LCP-safe, CLS 0).
+ * LCP-safe: pure CSS gradients, instant first paint. CLS 0 (position:absolute).
  */
 
 import { HeroField } from './HeroField';
@@ -60,21 +52,22 @@ export function HeroComposition() {
         }}
       />
 
-      {/* Layered brass radials from --metador-primary-rgb at low alpha (atmosphere) */}
+      {/* Layered mint radials from --metador-primary-rgb at low alpha (atmosphere).
+          Alphas reduced vs brass ramp: mint is lighter, blooms faster on dark. */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
           background:
-            'radial-gradient(46% 42% at 74% 34%, rgba(var(--metador-primary-rgb), 0.10) 0%, transparent 64%),' +
-            'radial-gradient(60% 55% at 88% 12%, rgba(var(--metador-primary-rgb), 0.05) 0%, transparent 70%),' +
-            'radial-gradient(70% 60% at 8% 92%, rgba(var(--metador-primary-rgb), 0.04) 0%, transparent 72%)',
+            'radial-gradient(46% 42% at 74% 34%, rgba(var(--metador-primary-rgb), 0.07) 0%, transparent 64%),' +
+            'radial-gradient(60% 55% at 88% 12%, rgba(var(--metador-primary-rgb), 0.04) 0%, transparent 70%),' +
+            'radial-gradient(70% 60% at 8% 92%, rgba(var(--metador-primary-rgb), 0.03) 0%, transparent 72%)',
         }}
       />
 
-      {/* Living organic brass field — drifting metaballs that glow-merge.
-          The Metador-brand equivalent of the benchmark's morphing hero (founder
-          parity directive). Transform/opacity only; reduced-motion = static. */}
+      {/* Living organic mint field — drifting metaballs that glow-merge.
+          Metador-brand match for the benchmark's morphing hero (ADR-010 green).
+          Transform/opacity only; reduced-motion = static. */}
       <HeroField />
     </div>
   );

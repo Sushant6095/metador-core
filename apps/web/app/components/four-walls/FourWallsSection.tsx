@@ -17,9 +17,9 @@ interface WallCard {
   accentColor: string;
 }
 
-// Spec §3.4 + §5.3: card titles use --metador-text (drop brass).
+// Spec §3.4 + §5.3: card titles use --metador-text (no primary for decoration).
 // Wall-4 keeps --metador-revoke as the SOLE color signal.
-// Wall-3 uses --metador-warn (orange) — a semantic signal, not brass decoration.
+// Wall-3 uses --metador-warn (orange) — a semantic signal, not a decorative accent.
 const WALLS: readonly WallCard[] = [
   {
     id: 'budget',
@@ -85,7 +85,7 @@ export function FourWallsSection() {
           transition={{ duration: DURATIONS_S.slow, ease: EASE_ENTER }}
           style={{ marginBottom: 'var(--metador-space-12)' }}
         >
-          {/* Eyebrow: faint per spec §3.4 — not brass */}
+          {/* Eyebrow: faint per spec §3.4 — metador-eyebrow class */}
           <p
             className="metador-eyebrow"
             style={{

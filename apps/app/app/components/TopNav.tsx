@@ -16,6 +16,7 @@ const NAV_LINKS: NavLink[] = [
   { href: '/trade', label: 'Trade' },
   { href: '/', label: 'Marketplace' },
   { href: '/screener', label: 'Screener' },
+  { href: '/network', label: 'Network' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/cockpit', label: 'Cockpit' },
   { href: '/safety', label: 'Safety' },

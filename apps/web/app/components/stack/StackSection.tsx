@@ -6,10 +6,10 @@
  *
  * Pattern transfer ONLY (choreography.md §3 — their stack is an iso layer
  * diagram; ours is hand-authored, our tokens, our content, our composition).
- * Divergence: brass edges on cold slate ≠ their mint blocks on forest; our four
- * layers describe Metador's architecture, not theirs. Two different brands.
+ * Our four layers describe Metador's architecture, not theirs.
  *
- * Layers bottom→top (extruded iso boxes, brass edge accents, mono caps labels):
+ * Layers bottom→top (extruded iso boxes, mint edge accents on owned layer,
+ * border-color accents on the rest, mono caps labels):
  *   Sui  →  DeepBook  →  keel_core (vault · policy · shares)  →
  *   Apps (marketplace · cockpit · screener)
  *
@@ -24,7 +24,7 @@ interface StackLayer {
   id: string;
   title: string;
   sub: string;
-  /** highlight: keel_core is the one layer Metador owns — brass-emphasised face */
+  /** highlight: keel_core is the one layer Metador owns — mint-accented face */
   owned: boolean;
 }
 

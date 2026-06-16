@@ -68,14 +68,8 @@ export function BuildersBand() {
           style={{ marginBottom: 'var(--metador-space-12)' }}
         >
           <p
-            style={{
-              fontFamily: 'var(--metador-font-text)',
-              fontSize: 'var(--metador-text-xs)',
-              color: 'var(--metador-primary)',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              marginBottom: 'var(--metador-space-3)',
-            }}
+            className="metador-eyebrow"
+            style={{ marginBottom: 'var(--metador-space-3)' }}
           >
             Stack
           </p>
@@ -122,7 +116,7 @@ export function BuildersBand() {
                 alignItems: 'flex-start',
               }}
             >
-              {/* Brass ordinal */}
+              {/* Mint ordinal — primary color tabular */}
               <span
                 aria-hidden="true"
                 style={{

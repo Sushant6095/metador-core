@@ -1,21 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Metador">
   <!--
-    Metador app favicon / icon — charging-bull mark.
-    Raw hex is intentional here: a standalone icon served directly by Next.js.
-    This is the ONLY place raw hex is permitted (CLAUDE.md §1 icon exception).
-    Background: --metador-bg #0A0E14 (slate)
-    Bull: --metador-primary #F2A516 (brass)
+    Metador favicon — geometric "M" keel-point monogram (ADR-010).
+    Raw hex is intentional: a standalone icon served directly by Next.js — the
+    ONLY place raw hex is permitted (CLAUDE.md §1 icon exception).
+    Background: --metador-bg #0a0e14 · Mark: --metador-primary #50d2c1 (mint).
   -->
-  <rect width="64" height="64" rx="14" fill="#0A0E14" />
-  <g fill="#F2A516" transform="translate(2.7 1) scale(0.85)">
-    <path d="M9 30 Q11 21 22 20 Q29 15 38 18 Q44 20 46 26 L45 34 Q44 39 38 41 Q24 44 16 40 Q10 37 9 30 Z" />
-    <path d="M45 25 Q53 25 57 31 L60 39 Q60 42 56 41 L49 39 Q44 36 44 30 Z" />
-    <path d="M50 26 Q57 19 63 17 Q60 21 56 27 Q53 28 50 26 Z" />
-    <path d="M49 28 Q54 23 60 22 Q57 26 53 30 Q51 30 49 28 Z" />
-    <path d="M12 30 Q6 25 8 15 Q10 17 11 24 Q13 28 14 31 Z" />
-    <path d="M42 39 L48 55 L45 56 L39 40 Z" />
-    <path d="M38 40 L38 57 L41 57 L42 40 Z" />
-    <path d="M22 40 L24 57 L21 57 L19 40 Z" />
-    <path d="M17 39 L11 54 L14 55 L20 40 Z" />
-  </g>
+  <rect width="64" height="64" rx="14" fill="#0a0e14" />
+  <path
+    d="M16 46 V20 L32 37 L48 20 V46"
+    fill="none"
+    stroke="#50d2c1"
+    stroke-width="6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
 </svg>

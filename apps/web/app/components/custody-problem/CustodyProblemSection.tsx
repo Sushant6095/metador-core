@@ -3,7 +3,7 @@
 /**
  * CustodyProblemSection — §8.2 (first narrative block, dark world).
  * The hook: states the custody problem plainly using real documented events.
- * Fraunces display title, Geist body, one stat callout.
+ * Inter display title, Inter body, one stat callout.
  * One whileInView stagger (max 8 items, 50ms/item, translateY 16→0 + opacity).
  * Transform/opacity only, prefers-reduced-motion = instant.
  * No fear-mongering: facts only, per DESIGN.md voice.
@@ -36,20 +36,14 @@ export function CustodyProblemSection() {
           width: '100%',
         }}
       >
-        {/* Eyebrow */}
+        {/* Eyebrow — faint + caps per spec §3.4 (metador-eyebrow class) */}
         <motion.p
+          className="metador-eyebrow"
           initial={{ opacity: 0, y: dy }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: DURATIONS_S.slow, ease: EASE_ENTER }}
-          style={{
-            fontFamily: 'var(--metador-font-text)',
-            fontSize: 'var(--metador-text-xs)',
-            color: 'var(--metador-primary)',
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            marginBottom: 'var(--metador-space-3)',
-          }}
+          style={{ marginBottom: 'var(--metador-space-3)' }}
         >
           The problem
         </motion.p>

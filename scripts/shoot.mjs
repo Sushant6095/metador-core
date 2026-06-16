@@ -14,7 +14,7 @@ try {
     const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
     const page = await ctx.newPage();
     await page.goto(url, { waitUntil: 'networkidle', timeout: 45000 });
-    await page.waitForTimeout(700); // let entrance animations settle
+    await page.waitForTimeout(Number(process.env.SETTLE_MS || 700)); // let entrance/chart init settle
     await page.screenshot({ path: `${prefix}-${w}.png`, fullPage: tall, animations: 'disabled', timeout: 30000 });
     await ctx.close();
     console.log(`shot ${w} → ${prefix}-${w}.png`);

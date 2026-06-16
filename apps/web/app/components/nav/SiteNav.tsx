@@ -12,7 +12,7 @@
  * STATIC on scroll (their measured behavior, choreography.md §3): no recolor,
  * no shrink, no transform. backdrop-filter:none (DESIGN.md overlay rule).
  *
- * Active-section awareness: brass underline on the matching link (transform/
+ * Active-section awareness: mint underline on the matching link (transform/
  * opacity only). Mobile: text links collapse; the pill + Launch App stay.
  * Works at 375px and 1440px.
  */
@@ -111,8 +111,8 @@ export function SiteNav() {
           className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
           style={{ textDecoration: 'none', borderRadius: 'var(--metador-radius-xs)' }}
         >
-          {/* neutralMark: the nav CTA is brass → logo mark goes neutral so the
-              hero viewport keeps brass ≤2 (elevation-spec §3.2). */}
+          {/* neutralMark: the nav CTA is mint → logo mark goes neutral so the
+              hero viewport keeps primary ≤2 (elevation-spec §3.2). */}
           <MetadorLogo size="sm" neutralMark />
         </Link>
 
@@ -159,7 +159,7 @@ export function SiteNav() {
                     }}
                   >
                     {link.label}
-                    {/* Brass underline on active — transform/opacity only */}
+                    {/* Mint underline on active — transform/opacity only */}
                     <span
                       aria-hidden="true"
                       style={{

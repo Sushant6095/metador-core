@@ -14,6 +14,8 @@
     "@metador/analytics": "workspace:*",
     "@metador/design-system": "workspace:*",
     "@metador/ui": "workspace:*",
+    "animejs": "^4.4.1",
+    "lenis": "^1.3.23",
     "motion": "^12.40.0",
     "next": "^16.0.0",
     "react": "^19.0.0",

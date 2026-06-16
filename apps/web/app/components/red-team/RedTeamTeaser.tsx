@@ -3,7 +3,7 @@
 /**
  * RedTeamTeaser — §8.6 dark band.
  * Short dark section ramping toward --metador-revoke accent.
- * Fraunces headline: "We leaked our own key."
+ * Inter headline: "We leaked our own key."
  * One sentence (funds untouched — the walls held).
  * Ghost CTA links to the app's /safety page (APP_URL + /safety).
  * Transform/opacity only. One stagger reveal. Max 8 items.
