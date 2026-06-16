@@ -219,10 +219,10 @@ interface StatSlotProps {
 }
 function StatSlot({ label, value, unit, accent }: StatSlotProps) {
   return (
-    <div className="flex flex-col gap-2 px-4 first:pl-0 min-w-0">
+    <div className="flex flex-col gap-2 min-w-0 px-0 sm:px-4 sm:first:pl-0">
       <span className="text-xs uppercase tracking-widest text-muted truncate">{label}</span>
       <span
-        className="font-mono text-4xl sm:text-5xl leading-none truncate"
+        className="font-mono text-3xl sm:text-4xl lg:text-5xl leading-none truncate"
         style={{
           fontVariantNumeric: 'tabular-nums lining-nums',
           color: accent ? 'var(--metador-primary)' : 'var(--metador-text)',
@@ -239,7 +239,7 @@ function StatBandStrip({ band }: { band: StatBand }) {
   const tvl = abbreviateTvl(band.tvlDbusdc, 6, '');
   return (
     <div
-      className="flex items-stretch divide-x divide-border py-3 overflow-x-auto"
+      className="grid grid-cols-2 gap-x-6 gap-y-5 sm:flex sm:items-stretch sm:gap-0 sm:divide-x sm:divide-border py-3"
       role="group"
       aria-label="Leaderboard totals"
     >
