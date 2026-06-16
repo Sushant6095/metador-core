@@ -1,0 +1,70 @@
+{
+  "url": "https://app.hyperliquid.xyz/trade",
+  "viewport": "768",
+  "capturedAt": "2026-06-11T13:55:25.233Z",
+  "fontFamilies": {
+    "OurFont, system-ui, \"Segoe UI\", Roboto, Ubuntu, \"Helvetica Neue\", sans-serif": 753,
+    "Inter, system-ui, \"Segoe UI\", Roboto, Ubuntu, \"Helvetica Neue\", sans-serif": 1,
+    "Inter": 1
+  },
+  "fontSizes": {
+    "12px": 420,
+    "16px": 290,
+    "14px": 25,
+    "18px": 16,
+    "20px": 3,
+    "10px": 1
+  },
+  "fontWeights": {
+    "400": 751,
+    "500": 4
+  },
+  "lineHeights": {
+    "15px": 35,
+    "31px": 31,
+    "21px": 16,
+    "34px": 16,
+    "24px": 2,
+    "30px": 1
+  },
+  "colors": {
+    "rgb(255, 255, 255)": 284,
+    "rgb(210, 218, 215)": 150,
+    "rgb(128, 128, 128)": 150,
+    "rgb(246, 254, 253)": 60,
+    "rgb(148, 158, 156)": 40,
+    "rgb(31, 166, 125)": 29,
+    "rgb(237, 112, 136)": 24,
+    "rgb(80, 210, 193)": 10,
+    "rgb(4, 6, 12)": 4,
+    "rgb(135, 140, 143)": 3,
+    "rgb(17, 156, 133)": 1
+  },
+  "backgroundColors": {
+    "rgb(15, 26, 31)": 11,
+    "rgb(80, 210, 193)": 3,
+    "rgb(48, 48, 48)": 1,
+    "rgb(15, 26, 30)": 1
+  },
+  "spacingSamples": {
+    "8px": 60,
+    "10px": 15,
+    "12px": 11,
+    "1px": 9,
+    "4px": 8,
+    "24px": 5,
+    "16px": 3,
+    "6px": 2,
+    "3px": 1,
+    "-4px": 1
+  },
+  "radii": {
+    "8px": 10,
+    "12px": 1,
+    "5px": 1,
+    "50%": 1
+  },
+  "shadows": {
+    "rgba(9, 20, 66, 0.25) 0px 20px 32px -8px": 1
+  }
+}

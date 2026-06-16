@@ -1,0 +1,14 @@
+[package]
+name = "agent_mandate"
+edition = "2024"
+version = "0.1.0"
+
+[dependencies]
+# §3B applied 2026-06-11: local pinned clone (commit e276939f). The git dep on
+# main has no published-at and cannot publish. Pins in the local clone:
+#   deepbook  published-at 0x22be…1a3c · addresses 0xfb28…6982 (registry type-origin)
+#   token     published-at = addresses = 0x36dbef…58a8 (from its Move.lock [env.testnet])
+deepbook = { local = "../deepbookv3/packages/deepbook" }
+
+[addresses]
+agent_mandate = "0x0"

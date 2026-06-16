@@ -1,0 +1,75 @@
+%% METADOR — System Architecture (Gate 1, delegate-first / ADR-004)
+%% Render: GitHub README, mermaid.live, or VS Code Mermaid extension
+flowchart TB
+
+  subgraph USERS["ACTORS"]
+    direction LR
+    DEP["Depositor (Maya)<br/>wallet / zkLogin<br/>deposits + withdraws + revoke-watch"]
+    LEAD["Leader (Leo)<br/>wallet keypair<br/>trades the vault via cockpit"]
+    CRANK["Cranker (anyone)<br/>npx metador-crank<br/>DCA ticks + expiry sweeps"]
+  end
+
+  subgraph WEB["apps/web — Next.js 15 + TS · Tailwind + shadcn · dapp-kit · TanStack Query · lightweight-charts"]
+    direction LR
+    MKT["/vaults<br/>marketplace + filters"]
+    DET["/vaults/:id<br/>NAV chart · policy card<br/>budget meter · activity log<br/>deposit / withdraw / REVOKE"]
+    CPIT["/vaults/:id/trade<br/>COCKPIT (leader-only)<br/>book · chart · ticket · open orders"]
+    WIZ["/create<br/>3-step wizard<br/>plain-English policy preview"]
+    PORT["/portfolio<br/>positions · my vaults"]
+  end
+
+  subgraph READ["READ LAYER — no servers of ours"]
+    RPC["Sui JSON-RPC<br/>objects + events<br/>poll 2–5s"]
+    IDX["DeepBook public indexer<br/>orderbook · fills · candles · mid"]
+  end
+
+  subgraph CHAIN["SUI TESTNET → MAINNET (Gate 3)"]
+    subgraph KEEL["contracts/keel_core — Move, ~900 LoC, THE audited surface"]
+      VAULT["Vault (shared object)<br/>━━━━━━━━━━━━━━<br/>🔒 trade_cap: TradeCap (locked at birth)<br/>policy: budget · pool-scope · max-order<br/>expiry · revoked · leader_min_stake<br/>shares: Supply + NAV mint/burn<br/>fees: perf_bps · crank_fee"]
+      EXEC["execute_order()<br/>sender == leader<br/>+ FOUR WALLS asserts"]
+      DCA["execute_dca()<br/>schedule assert<br/>callable by ANYONE"]
+      LIFE["deposit() / withdraw()<br/>create_vault() / revoke()<br/>reclaim_trade_cap()"]
+      EVT["events: VaultCreated · Deposited<br/>OrderExecuted · VaultRevoked · CrankPaid"]
+    end
+    subgraph DB["DeepBook v3 — EXISTS, we only call it"]
+      BM["BalanceManager (shared)<br/>funds live here<br/>withdraw = OWNER ONLY"]
+      POOL["Pool SUI/DBUSDC<br/>place_limit_order (public)<br/>book readable on-chain → no oracle"]
+    end
+  end
+
+  subgraph SVC["services/cranker — TS, ~300 LoC, untrusted convenience"]
+    CR["node-cron + @mysten/sui<br/>GitHub Actions schedule (free)<br/>chain re-verifies every call"]
+  end
+
+  DEP -->|"browse · deposit · withdraw · revoke"| MKT
+  DEP --> DET
+  LEAD -->|"place / cancel orders"| CPIT
+  LEAD --> WIZ
+  CRANK --> CR
+
+  MKT & DET & CPIT & PORT -->|"reads"| RPC
+  DET & CPIT -->|"book · candles"| IDX
+
+  WIZ -->|"PTB: new BM → mint TradeCap<br/>→ lock in Vault → share (ATOMIC)"| VAULT
+  DET -->|"PTB: deposit / withdraw / revoke"| LIFE
+  CPIT -->|"PTB: execute_order"| EXEC
+  CR -->|"PTB: execute_dca"| DCA
+
+  EXEC -->|"generate_proof_as_trader(&trade_cap)"| BM
+  EXEC -->|"place_limit_order (cross-package, atomic)"| POOL
+  DCA --> EXEC
+  LIFE --> BM
+  EXEC --> EVT
+  EVT -.->|"poll → activity feed animates"| RPC
+  POOL -.->|"fills settle"| BM
+
+  classDef user fill:#182134,stroke:#4DA2FF,color:#E6EDF7,stroke-width:1.5px
+  classDef web fill:#121826,stroke:#2DD4BF,color:#E6EDF7
+  classDef chain fill:#0F2A4A,stroke:#4DA2FF,color:#E6EDF7,stroke-width:2px
+  classDef ext fill:#1F2A3D,stroke:#8CA0B8,color:#E6EDF7
+  classDef hot fill:#2A1215,stroke:#F87171,color:#FECACA,stroke-width:2px
+  class DEP,LEAD,CRANK user
+  class MKT,DET,CPIT,WIZ,PORT web
+  class VAULT,EXEC,DCA,LIFE,EVT chain
+  class RPC,IDX,CR,BM,POOL ext
+  class EXEC hot

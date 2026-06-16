@@ -1,0 +1,209 @@
+/* Metador design tokens — CSS custom properties (single source of truth).
+   PROVISIONAL FREEZE 2026-06-11 — pending founder ratification (BOOTSTRAP
+   Phase F gate). Authored verbatim from DESIGN.md. No raw hex or app-local
+   values anywhere else (CLAUDE.md §1).
+
+   :root carries the dark (home) ramp. [data-theme='light'] overrides only the
+   light-ramp tokens (web relief sections; the app ships dark-first).
+
+   Font tokens reference the next/font CSS variables with the DESIGN.md
+   fallback stacks. */
+
+:root {
+  /* ── Color — dark (home) ─────────────────────────────────────────────── */
+  --metador-bg: #0a0e14;
+  --metador-surface: #111722;
+  --metador-raised: #1a2230;
+  --metador-border: #27313f;
+  --metador-text: #eceff4;
+  --metador-muted: #8a97a8;
+  --metador-faint: #5c6675;
+  --metador-primary: #f2a516;
+  /* Raw RGB triplet for use inside rgba() — matches --metador-primary dark ramp */
+  --metador-primary-rgb: 242, 165, 22;
+  --metador-primary-bright: #ffc24b;
+  --metador-primary-deep: #b97908;
+  --metador-on-primary: #0a0e14;
+  --metador-success: #4cb944;
+  --metador-warn: #db7e2d;
+  --metador-danger: #ff4d3e;
+  --metador-revoke: #e11d2a;
+  --metador-on-revoke: #ffffff;
+
+  /* ── Nav scrim — semi-opaque sticky nav background ──────────────────── */
+  --metador-bg-scrim-nav: rgba(10, 14, 20, 0.92);
+
+  /* ── Focus ring ──────────────────────────────────────────────────────── */
+  --metador-ring: #f2a516;
+  --metador-ring-width: 2px;
+  --metador-ring-offset: 2px;
+
+  /* ── Overlay, skeleton & state tints — dark ──────────────────────────── */
+  --metador-overlay: rgba(6, 9, 14, 0.62);
+  --metador-skeleton-base: #141b27;
+  --metador-skeleton-sheen: #1f2937;
+  --metador-tint-success: rgba(76, 185, 68, 0.12);
+  --metador-tint-warn: rgba(219, 126, 45, 0.12);
+  --metador-tint-danger: rgba(255, 77, 62, 0.12);
+  --metador-tint-revoke: rgba(225, 29, 42, 0.14);
+
+  /* ── Typography — faces ──────────────────────────────────────────────── */
+  --metador-font-display: var(
+    --font-fraunces,
+    'Iowan Old Style',
+    Georgia,
+    'Times New Roman',
+    serif
+  );
+  --metador-font-text: var(
+    --font-geist-sans,
+    'Geist Sans',
+    'Inter var',
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif
+  );
+  --metador-font-mono: var(
+    --font-geist-mono,
+    'Geist Mono',
+    'JetBrains Mono',
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace
+  );
+
+  /* ── Typography — sizes + companion line-heights (ratio 1.25 @ 16px) ─── */
+  --metador-text-2xs: 12px;
+  --metador-text-2xs--line-height: 1.25;
+  --metador-text-xs: 13px;
+  --metador-text-xs--line-height: 1.4;
+  --metador-text-sm: 14px;
+  --metador-text-sm--line-height: 1.25;
+  --metador-text-base: 16px;
+  --metador-text-base--line-height: 1.5;
+  --metador-text-lg: 20px;
+  --metador-text-lg--line-height: 1.4;
+  --metador-text-xl: 25px;
+  --metador-text-xl--line-height: 1.3;
+  --metador-text-2xl: 31px;
+  --metador-text-2xl--line-height: 1.2;
+  --metador-text-3xl: 39px;
+  --metador-text-3xl--line-height: 1.1;
+  --metador-text-4xl: 49px;
+  --metador-text-4xl--line-height: 1.05;
+  --metador-text-5xl: 64px;
+  --metador-text-5xl--line-height: 1;
+
+  /* ── Typography — weights ────────────────────────────────────────────── */
+  --metador-weight-regular: 400;
+  --metador-weight-medium: 500;
+  --metador-weight-semibold: 600;
+
+  /* ── Spacing — 4px base, 8px workhorse ───────────────────────────────── */
+  --metador-space-1: 4px;
+  --metador-space-2: 8px;
+  --metador-space-3: 12px;
+  --metador-space-4: 16px;
+  --metador-space-6: 24px;
+  --metador-space-8: 32px;
+  --metador-space-12: 48px;
+  --metador-space-16: 64px;
+  --metador-space-24: 96px;
+
+  /* ── Radii ───────────────────────────────────────────────────────────── */
+  --metador-radius-xs: 4px;
+  --metador-radius-sm: 6px;
+  --metador-radius-md: 8px;
+  --metador-radius-lg: 12px;
+  --metador-radius-xl: 18px;
+  /* --metador-radius-pill: floating nav pill on the web landing only.
+     NEW TOKEN added 2026-06-12 (landing premium pass, founder build-list #2).
+     Distinct from --metador-radius-full (999px, dots/avatars only): the pill is a
+     fixed generous radius for the detached rounded nav bar (choreography.md §3
+     measured 60px on the benchmark; we diverge to 32px — large but not their
+     signature 60px capsule). FOUNDER TO RATIFY at Phase F gate. */
+  --metador-radius-pill: 32px;
+  --metador-radius-full: 999px;
+
+  /* ── Shadows — layered, low-opacity, hue-tinted ──────────────────────── */
+  --metador-shadow-none: none;
+  --metador-shadow-raised: 0 1px 2px rgba(4, 7, 12, 0.4);
+  --metador-shadow-float: 0 12px 28px -8px rgba(6, 10, 20, 0.55),
+    0 2px 6px rgba(6, 10, 20, 0.4);
+  --metador-shadow-modal: 0 24px 56px -12px rgba(4, 7, 12, 0.7),
+    0 4px 12px rgba(4, 7, 12, 0.5);
+  --metador-glow-primary: 0 0 24px -4px rgba(242, 165, 22, 0.45);
+  --metador-glow-revoke: 0 0 32px -2px rgba(225, 29, 42, 0.5);
+
+  /* ── Z-layers ────────────────────────────────────────────────────────── */
+  --metador-z-base: 0;
+  --metador-z-elevated: 10;
+  --metador-z-floating: 100;
+  --metador-z-modal: 1000;
+  --metador-z-toast: 2000;
+
+  /* ── Motion — durations ──────────────────────────────────────────────── */
+  --metador-duration-fast: 120ms;
+  --metador-duration-base: 200ms;
+  --metador-duration-slow: 320ms;
+  --metador-duration-hero: 520ms;
+  --metador-duration-ambient: 6000ms;
+
+  /* ── Motion — easings ────────────────────────────────────────────────── */
+  --metador-ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --metador-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --metador-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Dark ramp re-assert ──────────────────────────────────────────────────
+   [data-theme='dark'] re-states the dark (home) ramp so a dark island can sit
+   INSIDE a [data-theme='light'] section without raw hex. Used by the flagship
+   product frame (the app lives dark even on a pale web section). Mirrors the
+   :root dark values exactly — single source of truth stays :root; this only
+   restores them when nested under a light ancestor. */
+[data-theme='dark'] {
+  --metador-bg-scrim-nav: rgba(10, 14, 20, 0.92);
+  --metador-primary-rgb: 242, 165, 22;
+  --metador-bg: #0a0e14;
+  --metador-surface: #111722;
+  --metador-raised: #1a2230;
+  --metador-border: #27313f;
+  --metador-text: #eceff4;
+  --metador-muted: #8a97a8;
+  --metador-faint: #5c6675;
+  --metador-primary: #f2a516;
+  --metador-primary-bright: #ffc24b;
+  --metador-primary-deep: #b97908;
+  --metador-on-primary: #0a0e14;
+  --metador-success: #4cb944;
+  --metador-warn: #db7e2d;
+  --metador-danger: #ff4d3e;
+  --metador-revoke: #e11d2a;
+  --metador-on-revoke: #ffffff;
+}
+
+/* ── Color — light ramp (web relief sections; dark-first overall) ─────────
+   Overrides exactly the light-ramp tokens from DESIGN.md. The app does not
+   use light mode in v1 — this ramp exists for web storytelling sections. */
+[data-theme='light'] {
+  --metador-bg-scrim-nav: rgba(247, 245, 240, 0.92);
+  /* RGB triplet for the light-ramp primary (#B97908) */
+  --metador-primary-rgb: 185, 121, 8;
+  --metador-bg: #f7f5f0;
+  --metador-surface: #ffffff;
+  --metador-raised: #fbf9f4;
+  --metador-border: #cfc7b6;
+  --metador-text: #1a1f29;
+  --metador-muted: #5a6472;
+  --metador-faint: #8b93a1;
+  --metador-primary: #b97908;
+  --metador-primary-bright: #8f5c04;
+  --metador-success: #147346;
+  --metador-warn: #8f5410;
+  --metador-danger: #c8303e;
+  --metador-revoke: #b5121d;
+  --metador-on-primary: #ffffff;
+  --metador-on-revoke: #ffffff;
+}

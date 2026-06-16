@@ -1,0 +1,92 @@
+%% KEEL — Move object model (keel_core) + DeepBook objects we touch
+classDiagram
+  direction LR
+
+  class Vault {
+    <<shared object>>
+    +id: UID
+    +name: String
+    +owner: address
+    +leader: address
+    -trade_cap: TradeCap 🔒 locked at birth
+    +balance_manager_id: ID
+    +policy: Policy
+    +strategy: Strategy
+    +share_supply: Supply
+    +fees: FeeConfig
+    +create_vault(cap, bm, policy, fees)
+    +deposit(bm, coin) shares at NAV
+    +withdraw(bm, shares) cancel→settle→pay
+    +execute_order(pool, bm, side, px, qty) leader-only + walls
+    +execute_dca(pool, bm, clock) anyone + schedule
+    +revoke() owner-only
+    +reclaim_trade_cap() owner, after revoke
+  }
+
+  class Policy {
+    <<the four walls>>
+    +budget_quote: u64
+    +spent_quote: u64
+    +allowed_pool: ID
+    +max_order_quote: u64
+    +expiry_ms: u64
+    +revoked: bool
+    +leader_min_stake_bps: u64
+    +check_and_debit() u64
+  }
+
+  class Strategy {
+    <<enum>>
+    Delegate
+    Dca: quote_per_tick, interval_ms, next_tick_ms
+    Gate2 variants: Mirror, Grid, StopLoss
+  }
+
+  class FeeConfig {
+    +perf_fee_bps: u64  %% to leader, on profit only
+    +crank_fee_quote: u64
+  }
+
+  class TradeCap {
+    <<deepbook — key,store>>
+    can: generate TradeProof
+    cannot: withdraw — no such path in bytecode
+  }
+
+  class BalanceManager {
+    <<deepbook — shared>>
+    +owner: address
+    funds live HERE
+    +deposit() owner
+    +withdraw() OWNER ONLY ✅
+    +generate_proof_as_trader(cap) public
+  }
+
+  class Pool {
+    <<deepbook — shared, generic over Base/Quote>>
+    on-chain book = price oracle for free
+    +place_limit_order(bm, proof, px, qty) public
+    +cancel_order(bm, proof, id)
+  }
+
+  class Events {
+    <<copy,drop>>
+    VaultCreated
+    Deposited / Withdrawn
+    OrderExecuted (the activity log)
+    VaultRevoked
+    CrankPaid
+  }
+
+  Vault *-- Policy : embeds
+  Vault *-- Strategy : embeds
+  Vault *-- FeeConfig : embeds
+  Vault *-- TradeCap : LOCKS 🔒
+  Vault ..> BalanceManager : trades via proof
+  Vault ..> Pool : place_limit_order
+  Vault ..> Events : emits
+  TradeCap ..> BalanceManager : proof for
+  Pool ..> BalanceManager : settles fills
+
+  note for Vault "Audit surface = this package only (~900 LoC).\nEverything below the dotted arrows is DeepBook's, already live."
+  note for BalanceManager "The red-team beat lives here:\nwithdraw checks OWNER address —\nDeepBook's code, not ours."

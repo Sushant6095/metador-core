@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="Metador">
+  <g stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Outer gimbal ring: tall upright ellipse, the steadying frame -->
+    <ellipse cx="32" cy="33" rx="13" ry="23" />
+    <!-- Inner gimbal ring: tilted ellipse, the second balancing axis -->
+    <ellipse cx="32" cy="33" rx="22" ry="11" transform="rotate(-20 32 33)" />
+  </g>
+  <!-- Vertical axis / instrument needle: the keel spine piercing the gimbals -->
+  <g fill="currentColor">
+    <rect x="30" y="7" width="4" height="51" rx="2" />
+    <circle cx="32" cy="33" r="3.5" />
+  </g>
+</svg>

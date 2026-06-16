@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="Metador">
+  <!--
+    THE STRUCTURAL K — naval-engineering monogram.
+    Read it as a hull seen in cross-section, not a typographic K:
+      Stem  = the keel blade — the structural spine, running the full draft
+              and protruding below the hull as a real fin keel does.
+      Upper = the rising sheer line of the deck.
+      Lower = the turn of the bilge, the hull bottom angling to the waterline.
+      Joint = the single rivet where blade and hull lock — the load-bearing knot.
+    Hand-authored coordinates on the 64 grid. currentColor only.
+  -->
+  <g stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Metador blade: dead-vertical spine; foot drops past the hull as the fin keel -->
+    <path d="M18 6 L18 58" />
+    <!-- Upper arm: the sheer line rising from the joint to the deck edge -->
+    <path d="M18 31 L47 7" />
+    <!-- Lower arm: the bilge turn cutting down and aft to the waterline -->
+    <path d="M18 31 L49 51" />
+  </g>
+  <!-- The rivet: where blade and hull strokes lock — the structural joint -->
+  <circle cx="18" cy="31" r="3" fill="currentColor" />
+</svg>

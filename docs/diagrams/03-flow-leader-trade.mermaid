@@ -1,0 +1,44 @@
+%% KEEL — Flow 2: Leader trades the vault through the four walls (delegate model, ADR-004)
+%% Includes the red-team paths the demo performs live.
+sequenceDiagram
+  autonumber
+  actor Leo as Leader (or ATTACKER with leaked key)
+  participant CP as Cockpit /vaults/:id/trade
+  participant V as keel_core Vault
+  participant BM as DeepBook BalanceManager
+  participant P as DeepBook Pool SUI/DBUSDC
+
+  Leo->>CP: ticket: BUY 100 SUI @ 3.50 (notional 350)
+  CP->>V: PTB execute_order(vault, pool, bm, side, px, qty)
+
+  rect rgb(15, 42, 74)
+    Note over V: THE FOUR WALLS (Move asserts — any failure aborts ALL)
+    V->>V: 1. sender == vault.leader            (else 1 ENotExecutor)
+    V->>V: 2. !revoked                          (else 2 ERevoked)
+    V->>V: 3. now < expiry_ms                   (else 3 EExpired)
+    V->>V: 4. pool == allowed_pool              (else 4 EWrongPool)
+    V->>V: 5. notional <= max_order_quote
+    V->>V: 6. spent + notional <= budget_quote  (else 6 EBudgetExceeded)
+    V->>V: debit spent += 350
+  end
+
+  V->>BM: generate_proof_as_trader(&locked trade_cap)
+  BM-->>V: TradeProof
+  V->>P: place_limit_order(bm, proof, px, qty, bid)
+  P-->>BM: fills settle into vault funds
+  V-->>CP: emit OrderExecuted{order_id, notional, spent_after}
+  CP-->>Leo: feed row + budget meter ticks (poll 2–5s)
+
+  alt RED TEAM — attacker tries to withdraw with leaked leader key
+    Leo->>BM: withdraw(bm, 5000)
+    BM-->>Leo: ❌ ABORT EInvalidOwner — DeepBook's own owner check.<br/>Not Keel's code. Unfakeable.
+  end
+  alt budget breach
+    Leo->>V: execute_order(... notional 2,500 ...)
+    V-->>Leo: ❌ ABORT code 6 EBudgetExceeded — order never reaches the book
+  end
+  alt owner revokes mid-flight
+    actor Maya as Owner
+    Maya->>V: revoke()
+    V-->>Maya: VaultRevoked · next execute_order → ❌ code 2
+  end

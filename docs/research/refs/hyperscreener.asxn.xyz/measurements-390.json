@@ -1,0 +1,64 @@
+{
+  "url": "https://hyperscreener.asxn.xyz/home",
+  "viewport": "390",
+  "capturedAt": "2026-06-11T20:33:12.861Z",
+  "fontFamilies": {
+    "\"Overused Grotesk\", sans-serif": 320,
+    "\"Libre Baskerville\", serif": 2,
+    "\"Overused Grotesk\", Poppins, \"IBM Plex Mono\", \"SF Mono\", Monaco, Inconsolata, \"Fira Code\", monospace": 1
+  },
+  "fontSizes": {
+    "16px": 290,
+    "14px": 27,
+    "12px": 4,
+    "19px": 2
+  },
+  "fontWeights": {
+    "300": 88,
+    "400": 234,
+    "500": 1
+  },
+  "lineHeights": {
+    "24px": 290,
+    "20px": 27,
+    "16px": 4,
+    "28.5px": 2
+  },
+  "colors": {
+    "rgb(255, 255, 255)": 223,
+    "oklch(0.985 0 0)": 65,
+    "oklch(0.708 0 0)": 22,
+    "rgb(15, 26, 30)": 4,
+    "rgb(136, 136, 136)": 3,
+    "rgb(81, 166, 145)": 2,
+    "oklab(0.708 0 0 / 0.4)": 2,
+    "oklab(0.708 0 0 / 0.2)": 2
+  },
+  "backgroundColors": {
+    "rgb(81, 166, 145)": 62,
+    "rgb(15, 26, 30)": 4,
+    "rgb(15, 26, 31)": 2,
+    "oklab(0.760388 0.0000346303 0.0000151992 / 0.119216)": 1,
+    "rgb(19, 158, 125)": 1,
+    "rgba(220, 239, 234, 0.6)": 1
+  },
+  "spacingSamples": {
+    "16px": 96,
+    "3px": 62,
+    "12px": 62,
+    "8px": 34,
+    "20px": 22,
+    "4px": 8,
+    "6px": 2,
+    "5px": 1,
+    "24px": 1
+  },
+  "radii": {
+    "6px": 62,
+    "3.35544e+07px": 4,
+    "3.35544e+07px 0px 0px 3.35544e+07px": 1
+  },
+  "shadows": {
+    "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.25) 0px 25px 50px -12px": 1
+  }
+}

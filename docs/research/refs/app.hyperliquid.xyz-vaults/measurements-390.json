@@ -1,0 +1,65 @@
+{
+  "url": "https://app.hyperliquid.xyz/vaults",
+  "viewport": "390",
+  "capturedAt": "2026-06-11T13:54:01.616Z",
+  "fontFamilies": {
+    "OurFont, system-ui, \"Segoe UI\", Roboto, Ubuntu, \"Helvetica Neue\", sans-serif": 145
+  },
+  "fontSizes": {
+    "16px": 67,
+    "12px": 32,
+    "14px": 28,
+    "18px": 16,
+    "34px": 1,
+    "28px": 1
+  },
+  "fontWeights": {
+    "400": 141,
+    "500": 4
+  },
+  "lineHeights": {
+    "15px": 27,
+    "31px": 19,
+    "21px": 16,
+    "10px": 6,
+    "37px": 1,
+    "38px": 1,
+    "30px": 1
+  },
+  "colors": {
+    "rgb(246, 254, 253)": 83,
+    "rgb(255, 255, 255)": 29,
+    "rgb(148, 158, 156)": 18,
+    "rgb(80, 210, 193)": 5,
+    "rgb(135, 140, 143)": 4,
+    "rgb(70, 78, 77)": 4,
+    "rgb(4, 6, 12)": 2
+  },
+  "backgroundColors": {
+    "rgb(15, 26, 31)": 8,
+    "rgb(80, 210, 193)": 2,
+    "rgb(4, 37, 31)": 1
+  },
+  "spacingSamples": {
+    "12px": 12,
+    "16px": 9,
+    "10px": 8,
+    "24px": 5,
+    "8px": 5,
+    "4px": 4,
+    "-4px": 1,
+    "5px": 1,
+    "6px": 1,
+    "20px": 1
+  },
+  "radii": {
+    "8px": 10,
+    "10px": 2,
+    "2px": 2,
+    "12px": 1,
+    "5px": 1
+  },
+  "shadows": {
+    "rgba(9, 20, 66, 0.25) 0px 20px 32px -8px": 1
+  }
+}

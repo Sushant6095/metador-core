@@ -1,0 +1,6 @@
+# Concept — THE KEEL-SPINE
+
+- **Idea:** A naval-architecture body-plan midship section reduced to one continuous stroke — deck beam across the top, near-vertical topsides, the turn of the bilge sweeping through a deadrise V — with the keel blade descending on the centerline to a fine point. A lines drawing, not boat clipart.
+- **Why it reads "Metador":** The vertical blade *is* the keel — the structural spine below the waterline that keeps a vessel upright; the hull section frames it as the thing the spine holds together, mirroring the product thesis "the structure that keeps depositor funds upright."
+- **How it survives 16px:** Two elements only (closed hull outline + one blade stroke), a constant 5-unit weight on a 64 grid, single clean corner joins, and ~6px breathing room — the deck beam and descending blade stay legible as pure geometry with no fills, gradients, or fine detail to clog.
+- **Divergence note:** No closed blob or butterfly silhouette (unlike Hyperliquid's organic mark) and no rounded teardrop/water-drop (unlike Sui) — this is an open, hard-cornered engineered section with a straight axial blade; the closing deck beam at top deliberately kills any goblet/shield read, and it carries Metador's warm brass, never a benchmark hue.

@@ -1,0 +1,81 @@
+{
+  "url": "https://hyperliquid.gitbook.io/hyperliquid-docs",
+  "viewport": "390",
+  "capturedAt": "2026-06-11T20:35:36.959Z",
+  "fontFamilies": {
+    "Inter, \"Inter Fallback\", system-ui, arial": 217
+  },
+  "fontSizes": {
+    "14px": 156,
+    "16px": 38,
+    "20px": 13,
+    "12px": 9,
+    "30px": 1
+  },
+  "fontWeights": {
+    "400": 181,
+    "500": 2,
+    "600": 32,
+    "700": 2
+  },
+  "lineHeights": {
+    "20px": 89,
+    "17.5px": 55,
+    "26px": 29,
+    "21px": 17,
+    "27.5px": 9,
+    "16px": 9,
+    "28px": 4,
+    "24px": 4,
+    "37.5px": 1
+  },
+  "colors": {
+    "rgb(254, 255, 255)": 94,
+    "rgb(189, 193, 192)": 65,
+    "oklab(0.999238 -0.00096643 -0.000292122 / 0.64)": 45,
+    "rgb(151, 252, 228)": 8,
+    "rgba(0, 0, 0, 0)": 4,
+    "rgb(127, 135, 133)": 1
+  },
+  "backgroundColors": {
+    "rgb(29, 29, 29)": 10,
+    "oklab(0.230749 0.000010483 0.00000461936 / 0.88)": 1,
+    "rgb(151, 252, 228)": 1,
+    "rgb(43, 44, 44)": 1
+  },
+  "spacingSamples": {
+    "12px": 46,
+    "8px": 37,
+    "4px": 37,
+    "6px": 28,
+    "16px": 9,
+    "20px": 9,
+    "1.75px": 8,
+    "2.625px": 3,
+    "15px": 3,
+    "10px": 3,
+    "2px normal": 3,
+    "24px": 2,
+    "3px": 2,
+    "32px": 1,
+    "-12px": 1,
+    "1px": 1,
+    "-16px": 1,
+    "14px": 1,
+    "3.5px": 1
+  },
+  "radii": {
+    "6px": 20,
+    "8px": 15,
+    "12px": 7,
+    "4px": 4,
+    "0px 6px 6px 0px": 2,
+    "8px 0px 0px 8px": 1,
+    "0px 8px 8px 0px": 1
+  },
+  "shadows": {
+    "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px": 18,
+    "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.230749 0.000010483 0.00000461936) 0px 1px 2px 0px": 6,
+    "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklab(0.999238 -0.00096643 -0.000292122 / 0.08) 0px 1px 0px 0px": 1
+  }
+}

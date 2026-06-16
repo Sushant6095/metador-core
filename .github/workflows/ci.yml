@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  workspace:
+    name: typecheck · lint · test · build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+
+  move:
+    name: sui move test (keel_core)
+    runs-on: ubuntu-latest
+    env:
+      # Keep in step with the founder machine (sui 1.72.2).
+      SUI_RELEASE: testnet-v1.72.2
+    steps:
+      - uses: actions/checkout@v4
+      - name: Vendor pinned deepbookv3
+        run: bash contracts/scripts/setup-deepbook.sh
+      - name: Install sui CLI
+        run: |
+          curl -fsSL -o sui.tgz \
+            "https://github.com/MystenLabs/sui/releases/download/${SUI_RELEASE}/sui-${SUI_RELEASE}-ubuntu-x86_64.tgz"
+          mkdir -p "$HOME/sui-bin"
+          tar -xzf sui.tgz -C "$HOME/sui-bin"
+          echo "$HOME/sui-bin" >> "$GITHUB_PATH"
+      - name: Move unit tests
+        working-directory: contracts/keel_core
+        run: sui move test

@@ -1,0 +1,27 @@
+%% KEEL — Flow 1: Create Vault (one atomic PTB — the TradeCap never exists outside the box)
+sequenceDiagram
+  autonumber
+  actor Leo as Leader (Leo)
+  participant Web as apps/web /create wizard
+  participant Sui as Sui chain (one PTB)
+  participant KC as keel_core::vault
+  participant DB as deepbook::balance_manager
+
+  Leo->>Web: Step 1 — pick strategy (Copy-delegate / DCA)
+  Leo->>Web: Step 2 — params + policy (budget 5,000 · SUI/DBUSDC only · max 400/order · 30d · fee 10%)
+  Web-->>Leo: plain-English policy + "what this vault can NEVER do"
+  Leo->>Web: Step 3 — review, sign once
+
+  Web->>Sui: PTB { 4 commands, all-or-nothing }
+  activate Sui
+  Sui->>DB: 1. balance_manager::new() → BalanceManager
+  Sui->>DB: 2. mint_trade_cap(&mut bm) → TradeCap
+  Sui->>KC: 3. create_vault(trade_cap, policy, fees, leader)
+  Note over KC: TradeCap moved INTO Vault struct.<br/>Born locked. No wallet ever holds it.<br/>leader_min_stake enforced on first deposit.
+  Sui->>KC: 4. share_object(Vault) + share(BalanceManager)
+  KC-->>Sui: emit VaultCreated{id, leader, policy}
+  deactivate Sui
+
+  Sui-->>Web: digest + object ids
+  Web-->>Leo: vault page live · listed on /vaults
+  Note over Leo,DB: Atomicity = the security property:<br/>no intermediate state where the cap is stealable.

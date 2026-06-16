@@ -1,0 +1,41 @@
+%% KEEL — Flow 3: Depositor lifecycle (shares/NAV) + permissionless DCA crank
+sequenceDiagram
+  autonumber
+  actor Maya as Depositor (Maya)
+  participant Web as apps/web
+  participant V as keel_core Vault
+  participant BM as DeepBook BalanceManager
+  participant P as Pool (on-chain mid price)
+  actor Bot as Cranker (anyone)
+
+  rect rgb(18, 24, 38)
+    Note over Maya,BM: DEPOSIT — shares minted at live NAV
+    Maya->>Web: deposit 1,000 DBUSDC
+    Web->>V: PTB deposit(vault, bm, coin)
+    V->>P: read mid (same tx — no oracle)
+    V->>V: NAV = bm.quote + bm.base × mid<br/>shares = 1,000 / NAV_per_share (first deposit ⇒ 1:1)
+    V->>BM: deposit funds → vault's BalanceManager
+    V-->>Web: emit Deposited{1,000 → 1,000 shares} · TVL 10,000
+  end
+
+  rect rgb(18, 24, 38)
+    Note over Bot,P: DCA CRANK — untrusted trigger, trusted walls
+    loop every interval (e.g. 4h) — GitHub Actions cron or anyone's CLI
+      Bot->>V: execute_dca(vault, pool, bm)
+      V->>V: assert now >= next_tick_ms + FOUR WALLS + debit
+      V->>P: place_limit_order(50 DBUSDC of SUI)
+      V->>V: next_tick_ms += interval
+      V-->>Bot: emit OrderExecuted + CrankPaid{fee → cranker}
+    end
+  end
+
+  rect rgb(18, 24, 38)
+    Note over Maya,BM: WITHDRAW — anytime, owner-grade right (ADR-003)
+    Maya->>Web: withdraw all (NAV/share now 1.120)
+    Web->>V: PTB withdraw(vault, bm, 1,000 shares)
+    V->>P: cancel open vault orders → settle
+    V->>V: payout = shares × NAV = 1,120<br/>perf fee = 10% × profit(120) = 12 → leader
+    V->>BM: withdraw 1,108 → Maya (vault-internal accounting)
+    V-->>Web: emit Withdrawn{1,108} · shares burned
+    Note over Maya: Maya nets 1,108. Nobody could ever block or front-run her exit.
+  end

@@ -1,0 +1,40 @@
+node_modules/
+.next/
+dist/
+build/
+out/
+coverage/
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+.turbo/
+contracts/**/build/
+# vendored deepbookv3 clone (SPIKE-RUNBOOK §3B) — pinned locally, never committed
+contracts/deepbookv3/
+# reference-lab heavy artifacts — distillates (measurements/stack/ia/patterns) ARE tracked
+docs/research/refs/**/shots/
+docs/research/refs/**/video/
+docs/research/refs/**/trace-*.zip
+docs/research/refs/**/choreo/frames-*/
+docs/research/refs/**/choreo/video/
+temporary screenshots/
+*.pdf.tmp
+.gstack/
+# design-loop screenshot output — same heavy-artifact policy as reference-lab shots
+docs/research/keel-shots/
+# TS incremental build info + Playwright MCP browser artifacts
+*.tsbuildinfo
+.playwright-mcp/
+# §8 Reference Extraction Protocol — never ship competitors' images/video/binaries.
+# Only text distillates (*.md, *.json measurements) under refs/ are tracked.
+docs/research/refs/**/founder-shots/
+docs/research/refs/**/*.png
+docs/research/refs/**/*.jpg
+docs/research/refs/**/*.jpeg
+docs/research/refs/**/*.webp
+docs/research/refs/**/*.avif
+docs/research/refs/**/*.gif
+docs/research/refs/**/*.mp4
+docs/research/refs/**/*.webm

@@ -1,0 +1,95 @@
+{
+  "url": "https://hyperscreener.asxn.xyz/home",
+  "viewport": "1440",
+  "capturedAt": "2026-06-11T20:34:30.727Z",
+  "fontFamilies": {
+    "\"Overused Grotesk\", sans-serif": 2034,
+    "\"Libre Baskerville\", serif": 10,
+    "\"Overused Grotesk\", Poppins, \"IBM Plex Mono\", \"SF Mono\", Monaco, Inconsolata, \"Fira Code\", monospace": 2,
+    "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace": 1
+  },
+  "fontSizes": {
+    "16px": 1695,
+    "12px": 204,
+    "14px": 120,
+    "24px": 16,
+    "60px": 8,
+    "19px": 2,
+    "10px": 1,
+    "36px": 1
+  },
+  "fontWeights": {
+    "300": 88,
+    "400": 1939,
+    "500": 20
+  },
+  "lineHeights": {
+    "24px": 1695,
+    "18px": 157,
+    "20px": 120,
+    "16px": 47,
+    "32px": 16,
+    "60px": 8,
+    "28.5px": 2,
+    "13.3333px": 1,
+    "40px": 1
+  },
+  "colors": {
+    "rgb(255, 255, 255)": 1831,
+    "oklch(0.985 0 0)": 109,
+    "oklch(0.708 0 0)": 53,
+    "oklab(0.985 0 0 / 0.7)": 14,
+    "rgb(81, 166, 145)": 12,
+    "oklab(0.708 0 0 / 0.2)": 10,
+    "rgb(136, 136, 136)": 9,
+    "rgb(15, 26, 30)": 6,
+    "oklab(0.708 0 0 / 0.4)": 2,
+    "rgb(102, 102, 102)": 1
+  },
+  "backgroundColors": {
+    "rgb(81, 166, 145)": 62,
+    "rgb(15, 26, 31)": 19,
+    "oklab(0.209701 -0.0124635 -0.0138508 / 0.7)": 16,
+    "oklch(0.985 0 0)": 16,
+    "rgb(34, 107, 89)": 8,
+    "oklab(0.66601 -0.0886997 0.00753599 / 0.2)": 8,
+    "rgba(171, 171, 171, 0.584)": 8,
+    "rgb(255, 140, 0)": 7,
+    "rgb(94, 146, 134)": 5,
+    "rgb(164, 158, 158)": 5,
+    "rgb(242, 241, 241)": 5,
+    "oklab(0.708 0 0 / 0.8)": 4,
+    "rgb(197, 196, 196)": 4,
+    "rgb(15, 26, 30)": 3,
+    "oklab(0.760388 0.0000346303 0.0000151992 / 0.119216)": 1,
+    "rgb(19, 158, 125)": 1,
+    "rgba(220, 239, 234, 0.6)": 1
+  },
+  "spacingSamples": {
+    "16px": 123,
+    "8px": 104,
+    "12px": 81,
+    "4px": 68,
+    "3px": 62,
+    "40px": 24,
+    "20px": 22,
+    "24px": 21,
+    "22px": 12,
+    "6px": 11,
+    "8px 16px": 8,
+    "normal 16px": 6,
+    "2px": 3,
+    "32px": 2,
+    "5px": 1
+  },
+  "radii": {
+    "4px": 85,
+    "6px": 62,
+    "2px": 42,
+    "14px": 12,
+    "10px": 5,
+    "3.35544e+07px": 3,
+    "3.35544e+07px 0px 0px 3.35544e+07px": 1
+  },
+  "shadows": {}
+}

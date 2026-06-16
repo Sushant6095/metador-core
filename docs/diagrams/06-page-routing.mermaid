@@ -1,0 +1,44 @@
+%% KEEL — Page map & routing (11 screens: 10 from prototype + Cockpit)
+flowchart LR
+  L["/ Landing<br/>hero · live stats · red-team teaser"]
+  VS["/vaults Marketplace<br/>filters in URL ?strategy=&sort="]
+  VD["/vaults/:id Vault Detail<br/>NAV chart · policy card · budget meter<br/>activity feed · ?tab=activity deep-link"]
+  CP["/vaults/:id/trade COCKPIT<br/>leader-only guard<br/>book · candles · ticket · open orders"]
+  CR1["/create Step 1<br/>strategy picker"]
+  CR2["/create/params Step 2<br/>params + plain-English policy"]
+  CR3["/create/review Step 3<br/>review → sign 1 PTB"]
+  PF["/portfolio<br/>deposits · my vaults · history"]
+  LP["/leader/:addr (Gate 2)<br/>track record · AUM · vaults"]
+  SF["/safety<br/>structural proof · abort dictionary"]
+
+  DM{{"Deposit / Withdraw modal<br/>amount → share preview → sign"}}
+  RV{{"Revoke dialog<br/>type-name confirm → page flips REVOKED"}}
+
+  L --> VS
+  L --> SF
+  VS --> VD
+  VS --> CR1
+  CR1 --> CR2 --> CR3 -->|"success"| VD
+  CR2 -->|"back"| CR1
+  CR3 -->|"back"| CR2
+  VD <--> DM
+  VD <--> RV
+  VD -->|"leader badge click (guarded)"| CP
+  CP -->|"order placed → feed"| VD
+  VD -->|"leader pill"| LP
+  PF -->|"row click"| VD
+  PF <--> RV
+  SF -->|"see the revoked vault"| VD
+
+  NAV["Top nav (persistent):<br/>Vaults · Create · Portfolio · Safety · wallet pill"]
+  NAV -.-> VS & CR1 & PF & SF
+
+  classDef g1 fill:#121826,stroke:#2DD4BF,color:#E6EDF7
+  classDef hot fill:#0F2A4A,stroke:#4DA2FF,color:#E6EDF7,stroke-width:2px
+  classDef g2 fill:#1F2A3D,stroke:#8CA0B8,color:#8CA0B8,stroke-dasharray:4
+  classDef modal fill:#182134,stroke:#FBBF24,color:#E6EDF7
+  class L,VS,CR1,CR2,CR3,PF,SF g1
+  class VD,CP hot
+  class LP g2
+  class DM,RV modal
+  class NAV g2

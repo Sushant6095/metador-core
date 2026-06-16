@@ -1,0 +1,120 @@
+/**
+ * atmosphere.css — Metador atmosphere system (elevation-spec §2 + §4).
+ * Imported in layout.tsx. All values are token-derived; no raw hex.
+ *
+ * rgba() triplets from --metador-primary-rgb are the documented exception:
+ * WebGL/CSS cannot use var() inside rgba() without the rgb triplet form,
+ * and the triplet IS a token (defined in tokens.css). This is the design
+ * system's approved pattern for rgba transparency.
+ */
+
+/* ── .metador-field — layered radial atmosphere (§2.2) ───────────────────────
+   Two overlapping radial gradients from --metador-primary-rgb. Extremely
+   low alpha so it reads as atmosphere, not decoration. Sections can
+   override the gradient origins via inline style on the container. */
+.metador-field {
+  position: absolute;
+  pointer-events: none;
+  inset: 0;
+  background:
+    radial-gradient(60% 50% at 78% 30%, rgba(var(--metador-primary-rgb), 0.05) 0%, transparent 70%),
+    radial-gradient(80% 60% at 15% 90%, rgba(var(--metador-primary-rgb), 0.025) 0%, transparent 75%);
+}
+
+/* Light-section override — reduce atmosphere alpha on warm paper */
+[data-theme='light'] .metador-field {
+  background:
+    radial-gradient(60% 50% at 78% 30%, rgba(var(--metador-primary-rgb), 0.025) 0%, transparent 70%),
+    radial-gradient(80% 60% at 15% 90%, rgba(var(--metador-primary-rgb), 0.015) 0%, transparent 75%);
+}
+
+/* ── .metador-grain — SVG feTurbulence noise overlay (§2.3) ──────────────────
+   Baked as a data-URI background so it requires zero network requests.
+   opacity:0.035, mix-blend-mode:overlay, position:fixed so it tiles the
+   whole viewport and not just one section box.
+   baseFrequency .9 fractalNoise is the elevation-spec value.
+   The SVG filter is authored inline; no external file. */
+.metador-grain {
+  position: fixed;
+  pointer-events: none;
+  inset: 0;
+  z-index: var(--metador-z-floating);
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 300px 300px;
+  /* Grain never catches interaction events */
+}
+
+/* ── .metador-seam — glow-bleed section boundary band (§2.4) ─────────────────
+   120px tall gradient band placed absolutely at each dark→light and
+   section→section boundary. Softens the hard-cut slab look. */
+.metador-seam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 120px;
+  pointer-events: none;
+}
+
+.metador-seam--bottom {
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(var(--metador-primary-rgb), 0.04) 100%
+  );
+}
+
+.metador-seam--top {
+  top: 0;
+  background: linear-gradient(
+    to top,
+    transparent 0%,
+    rgba(var(--metador-primary-rgb), 0.04) 100%
+  );
+}
+
+/* ── .metador-vignette-bottom — depth fog ground (hero §1.2 z3) ──────────────
+   Gradient from transparent to --metador-bg so type sits on calm ground.
+   Only used in the hero; other sections use .metador-seam. */
+.metador-vignette-bottom {
+  position: absolute;
+  pointer-events: none;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 45%;
+  background: linear-gradient(transparent 0%, var(--metador-bg) 92%);
+}
+
+/* ── .metador-display — Fraunces editorial-sharp axis pinning (§4.2) ─────────
+   opsz:144 = max optical size → high-contrast editorial sharpness.
+   SOFT:0  = off → kills soft/rounded terminals.
+   WONK:0  = off → kills playful terminal wonk.
+   Used on all display headlines ≥4xl. Hero h1 gets weight:600 override. */
+.metador-display {
+  font-family: var(--metador-font-display);
+  font-variation-settings: 'opsz' 144, 'SOFT' 0, 'WONK' 0;
+  font-weight: 560;
+  letter-spacing: -0.03em;
+}
+
+.metador-display--hero {
+  font-variation-settings: 'opsz' 144, 'SOFT' 0, 'WONK' 0;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  /* founder build-list #1: hero leading 0.95 (parity hero.h1Leading 0.95±0.05) */
+  line-height: 0.95;
+}
+
+/* ── .metador-eyebrow — §4.4 eyebrow treatment ───────────────────────────────
+   Replaces brass-colored eyebrows with faint+caps+tracking. */
+.metador-eyebrow {
+  font-family: var(--metador-font-text);
+  font-size: var(--metador-text-xs);
+  font-weight: var(--metador-weight-medium);
+  color: var(--metador-faint);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}

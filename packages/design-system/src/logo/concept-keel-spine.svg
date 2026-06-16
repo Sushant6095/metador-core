@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="Metador">
+  <!--
+    THE KEEL-SPINE — naval body-plan midship section.
+    One continuous hull outline: deck beam across the top, near-vertical
+    topsides, turn of the bilge, deadrise sweep to the keel apex — plus the
+    keel blade descending on the centerline to a fine point.
+    Single-weight engineered stroke. currentColor so CSS sets the color.
+  -->
+  <g stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <!--
+      Hull section, one continuous closed line — the panel-winning silhouette.
+      The two bilge sweeps meet on the centreline at the apex (32,46) so the
+      keel blade grows out of the hull. Deck beam 11/53 for a steady base;
+      topsides drop straight (to y=32) before the bilge turns a clean quarter.
+    -->
+    <path d="M11 18 L53 18 L52 32 Q50 41 32 46 Q14 41 12 32 Z" />
+    <!--
+      Metador blade: the structural fin running the draft to a fine machined
+      point. Square-cut (butt) cap against the round hull caps so the tip
+      stays sharp and precise at 16px and does not blob into the apex.
+    -->
+    <path d="M32 46 L32 58" stroke-linecap="butt" />
+    <!--
+      WATERLINE TICKS — the device that kills the goblet/funnel read.
+      Placed LOW, at y=33 (the widest point of the bilge, where the real
+      waterline crosses a hull section), clearly BELOW the deck beam (y=18) so
+      they never fuse with the rim into "trophy handles". Set just outside the
+      hull flanks (2..8 / 56..62) so nothing touches the body line. This is the
+      universal body-plan convention: short reference marks at the water level
+      reframe the curve as "hull submerged below the waterline", not a bowl
+      that drains to a stem. Butt caps read as precise instrument ticks.
+      They may fade at 16px — acceptable; the form is unambiguous by 32px and
+      the ticks carry the nautical read at every larger size.
+    -->
+    <path d="M2 33 L8 33" stroke-linecap="butt" />
+    <path d="M56 33 L62 33" stroke-linecap="butt" />
+  </g>
+</svg>

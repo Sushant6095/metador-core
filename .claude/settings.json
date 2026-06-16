@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -c 'mkdir -p \"$CLAUDE_PROJECT_DIR/mind/journal\"; jq -r \"\\\"- \\\" + (now | strftime(\\\"%H:%M:%S\\\")) + \\\" - \\\" + .tool_name + \\\" - \\\" + (.tool_input.file_path // \\\"-\\\")\" >> \"$CLAUDE_PROJECT_DIR/mind/journal/$(date +%F).md\"'"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat \"$CLAUDE_PROJECT_DIR/mind/state.md\" 2>/dev/null || echo '# mind/state.md missing — create it before working (KAIOS §7)'"
+          }
+        ]
+      }
+    ]
+  }
+}

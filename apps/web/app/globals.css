@@ -1,0 +1,163 @@
+@import 'tailwindcss';
+@import '@metador/design-system/tokens.css';
+
+/* Scan shared UI + this app's source for utility classes. Tailwind v4 cannot
+   follow workspace packages automatically, so name them explicitly. */
+@source '../../../packages/ui/src';
+@source '../app';
+
+/* ── Tailwind v4 mapping (DESIGN.md "What ships where") ──────────────────
+   `@theme inline` so the raw `--metador-*` vars resolve at use-time and the
+   dark/light ramps reusing the same names actually theme-switch. Tailwind v4
+   has no namespace for z-index or transition-duration — `--metador-z-*` and
+   `--metador-duration-*` stay plain vars, consumed via `z-(--metador-z-modal)` /
+   `duration-(--metador-duration-fast)`. */
+@theme inline {
+  /* Colors */
+  --color-bg: var(--metador-bg);
+  --color-surface: var(--metador-surface);
+  --color-raised: var(--metador-raised);
+  --color-border: var(--metador-border);
+  --color-text: var(--metador-text);
+  --color-muted: var(--metador-muted);
+  --color-faint: var(--metador-faint);
+  --color-primary: var(--metador-primary);
+  --color-primary-bright: var(--metador-primary-bright);
+  --color-primary-deep: var(--metador-primary-deep);
+  --color-on-primary: var(--metador-on-primary);
+  --color-success: var(--metador-success);
+  --color-warn: var(--metador-warn);
+  --color-danger: var(--metador-danger);
+  --color-revoke: var(--metador-revoke);
+  --color-on-revoke: var(--metador-on-revoke);
+  --color-ring: var(--metador-ring);
+  --color-overlay: var(--metador-overlay);
+  --color-skeleton-base: var(--metador-skeleton-base);
+  --color-skeleton-sheen: var(--metador-skeleton-sheen);
+  --color-tint-success: var(--metador-tint-success);
+  --color-tint-warn: var(--metador-tint-warn);
+  --color-tint-danger: var(--metador-tint-danger);
+  --color-tint-revoke: var(--metador-tint-revoke);
+
+  /* Fonts */
+  --font-display: var(--metador-font-display);
+  --font-text: var(--metador-font-text);
+  --font-mono: var(--metador-font-mono);
+
+  /* Type scale + companion line-heights */
+  --text-2xs: var(--metador-text-2xs);
+  --text-2xs--line-height: var(--metador-text-2xs--line-height);
+  --text-xs: var(--metador-text-xs);
+  --text-xs--line-height: var(--metador-text-xs--line-height);
+  --text-sm: var(--metador-text-sm);
+  --text-sm--line-height: var(--metador-text-sm--line-height);
+  --text-base: var(--metador-text-base);
+  --text-base--line-height: var(--metador-text-base--line-height);
+  --text-lg: var(--metador-text-lg);
+  --text-lg--line-height: var(--metador-text-lg--line-height);
+  --text-xl: var(--metador-text-xl);
+  --text-xl--line-height: var(--metador-text-xl--line-height);
+  --text-2xl: var(--metador-text-2xl);
+  --text-2xl--line-height: var(--metador-text-2xl--line-height);
+  --text-3xl: var(--metador-text-3xl);
+  --text-3xl--line-height: var(--metador-text-3xl--line-height);
+  --text-4xl: var(--metador-text-4xl);
+  --text-4xl--line-height: var(--metador-text-4xl--line-height);
+  --text-5xl: var(--metador-text-5xl);
+  --text-5xl--line-height: var(--metador-text-5xl--line-height);
+
+  /* Weights */
+  --font-weight-regular: var(--metador-weight-regular);
+  --font-weight-medium: var(--metador-weight-medium);
+  --font-weight-semibold: var(--metador-weight-semibold);
+
+  /* Spacing — explicit closed ladder (no off-ladder steps like p-5=20px) */
+  --spacing-0: 0px;
+  --spacing-1: var(--metador-space-1);
+  --spacing-2: var(--metador-space-2);
+  --spacing-3: var(--metador-space-3);
+  --spacing-4: var(--metador-space-4);
+  --spacing-6: var(--metador-space-6);
+  --spacing-8: var(--metador-space-8);
+  --spacing-12: var(--metador-space-12);
+  --spacing-16: var(--metador-space-16);
+  --spacing-24: var(--metador-space-24);
+
+  /* Radii */
+  --radius-xs: var(--metador-radius-xs);
+  --radius-sm: var(--metador-radius-sm);
+  --radius-md: var(--metador-radius-md);
+  --radius-lg: var(--metador-radius-lg);
+  --radius-xl: var(--metador-radius-xl);
+  --radius-pill: var(--metador-radius-pill);
+  --radius-full: var(--metador-radius-full);
+
+  /* Shadows + glows */
+  --shadow-none: var(--metador-shadow-none);
+  --shadow-raised: var(--metador-shadow-raised);
+  --shadow-float: var(--metador-shadow-float);
+  --shadow-modal: var(--metador-shadow-modal);
+  --shadow-glow-primary: var(--metador-glow-primary);
+  --shadow-glow-revoke: var(--metador-glow-revoke);
+
+  /* Easings */
+  --ease-enter: var(--metador-ease-enter);
+  --ease-exit: var(--metador-ease-exit);
+  --ease-standard: var(--metador-ease-standard);
+
+  /* Skeleton (loading) — opacity-only pulse (DESIGN.md #motion) */
+  --animate-skeleton: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* ── Base styles ─────────────────────────────────────────────────────────
+   Dark is the product's home. Web relief sections opt into the light ramp
+   via [data-theme='light'] on a wrapping element. */
+body {
+  background-color: var(--metador-bg);
+  color: var(--metador-text);
+  font-family: var(--metador-font-text);
+}
+
+::selection {
+  background-color: var(--metador-primary);
+  color: var(--metador-on-primary);
+}
+
+/* Brass focus ring on every keyboard-driven interaction (CLAUDE.md §4). */
+:focus-visible {
+  outline: var(--metador-ring-width) solid var(--metador-ring);
+  outline-offset: var(--metador-ring-offset);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Nav — hide text links on narrow mobile ────────────────────────────── */
+@media (max-width: 600px) {
+  .nav-link-item {
+    display: none !important;
+  }
+}
+
+/* ── StatBand — tabular mono numerals ─────────────────────────────────── */
+.stat-band-value {
+  font-variant-numeric: tabular-nums lining-nums;
+}
