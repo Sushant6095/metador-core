@@ -1,0 +1,21 @@
+apps/app/app/docs/page.tsx
+  s_b05af9fb5ac634::t_a8359c802e3c3a 1-16
+apps/app/app/components/TopNav.tsx
+  s_b05af9fb5ac634::t_8f4e3206a583bf 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "b026a9d418b38a2a3d2e3eadf362537236cd1991",
+  "prompts": {},
+  "sessions": {
+    "s_b05af9fb5ac634": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "801087ee-9471-4937-8b4a-6514e891aedf",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Sushant Jain <sushant.jain@vyapar.com>"
+    }
+  }
+}
