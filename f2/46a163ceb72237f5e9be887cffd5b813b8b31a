@@ -1,0 +1,86 @@
+docs/decisions/009-predict-vault-pivot.md
+  s_b05af9fb5ac634::t_dec342e040ae01 1-88
+contracts/keel_core/Move.lock
+  s_b05af9fb5ac634::t_900622c1ef9eed 22-23,31-48,54-62
+packages/deepbook/src/sim/plp-hedge.ts
+  s_b05af9fb5ac634::t_fd3aa06b45ce91 1-139
+apps/app/app/predict/page.tsx
+  s_b05af9fb5ac634::t_9e3bf5ba746e50 3
+  s_b05af9fb5ac634::t_deb0177480f32a 1-2,4-275
+apps/app/app/predict/[id]/SviSurface.tsx
+  s_b05af9fb5ac634::t_2b7bdf6320b49f 1-22,24-118,120-208,210-213,215-266
+  s_b05af9fb5ac634::t_e153744862510d 119
+  s_b05af9fb5ac634::t_ed0c45f55800ce 23
+  s_b05af9fb5ac634::t_a84b96f2ce9e25 209,214
+ARCHITECTURE.md
+  s_b05af9fb5ac634::t_1c9443fb48b30b 12-26,29-33
+services/cranker/src/index.ts
+  s_b05af9fb5ac634::t_480155c07af692 2-5,8-13,15,17-20
+  s_b05af9fb5ac634::t_f0dc042196650e 7,14
+packages/deepbook/src/sim/plp-hedge.test.ts
+  s_b05af9fb5ac634::t_96b18469bcca84 23-24,30-31
+  s_b05af9fb5ac634::t_5f3b1010f5a5d9 1-22,25-29,32-64
+contracts/keel_core/sources/predict_vault.move
+  s_b05af9fb5ac634::t_47100b6acd9530 379
+  s_b05af9fb5ac634::t_34b61038fd7573 1-36,38,45,47,53,92,109,115-139,143,150-151,153-154,157-160,162,168-179,217-219,226,238-239,260-262,293,300,304-305,307-309,334,343-344,390-391,483,500-501,503,505,507,509,511,513,515,517,520-521,523-525,533-535,559-560,565-569,590-643
+apps/app/lib/mock-predict.ts
+  s_b05af9fb5ac634::t_5b551b5758abbe 1-297
+packages/deepbook/src/predict.ts
+  s_b05af9fb5ac634::t_2222411115c10a 1-198
+apps/app/app/predict/layout.tsx
+  s_b05af9fb5ac634::t_03e01dbf92b94f 1-11
+apps/app/app/predict/[id]/PlpRiskPanel.tsx
+  s_b05af9fb5ac634::t_6d3bda0a385042 1-260
+apps/app/app/predict/[id]/layout.tsx
+  s_b05af9fb5ac634::t_588627cdcaacb9 1-15
+contracts/keel_core/Move.toml
+  s_b05af9fb5ac634::t_f8708dfab3c25b 12-22
+  s_b05af9fb5ac634::t_58e966c0072fd6 24-29
+contracts/keel_core/tests/predict_vault_tests.move
+  s_b05af9fb5ac634::t_346e90f356d866 1-17,19-136,146-228
+  s_b05af9fb5ac634::t_d6ac3a7c928029 18,137-145
+docs/abort-codes.md
+  s_b05af9fb5ac634::t_94ccbe399750ab 61-81
+packages/deepbook/src/index.ts
+  s_b05af9fb5ac634::t_95b8cb772fbff2 3-24
+services/cranker/src/keeper.ts
+  s_b05af9fb5ac634::t_7fb286ed5722d7 1-127
+apps/app/app/predict/[id]/page.tsx
+  s_b05af9fb5ac634::t_d675a673cd36f7 285-287
+  s_b05af9fb5ac634::t_cbeaa0593c6094 488,490
+  s_b05af9fb5ac634::t_6808c1971e1688 1-284,288-487,489,491-713
+README.md
+  s_b05af9fb5ac634::t_83ef526941269a 5,7-12,15,18,29-30,32,36,43-48,52-57,61-71,75-76,78,80-84,86,88-89,91-101,106-108,110-112,114-115,118-121,125-128,130,132-144,150-159,167-168,170-171,173,175-177,180,185-187,190-192,194-195,198-203,205,207,209-214,218-225,229-234,236,240-243
+contracts/keel_core/PREDICT-SPIKE.md
+  s_b05af9fb5ac634::t_3ecf25a94c7990 1-61
+PRODUCT.md
+  s_b05af9fb5ac634::t_cb5b1d30ee1b20 3-6,8-14,16-19,21-28
+  s_b05af9fb5ac634::t_721dbbe56d6cb3 63-72,74-75,77-79
+  s_b05af9fb5ac634::t_3611e230ac532d 31-38,41-44,46-47
+  s_b05af9fb5ac634::t_43980f82794f7e 56-61
+apps/app/app/components/TopNav.tsx
+  s_b05af9fb5ac634::t_d17935bbab8615 15
+services/cranker/src/keeper.test.ts
+  s_b05af9fb5ac634::t_d761873bf30689 1-8,10-48,50-75
+  s_b05af9fb5ac634::t_e960d1b84b71fd 49
+  s_b05af9fb5ac634::t_48d567bf3cc6d8 9
+mind/journal/2026-06-16.md
+  s_b05af9fb5ac634::t_d6c2017b77c67a 16-20
+  s_b05af9fb5ac634::t_d6ac3a7c928029 21-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "f246a163ceb72237f5e9be887cffd5b813b8b31a",
+  "prompts": {},
+  "sessions": {
+    "s_b05af9fb5ac634": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "801087ee-9471-4937-8b4a-6514e891aedf",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Sushant Jain <sushant.jain@vyapar.com>"
+    }
+  }
+}
