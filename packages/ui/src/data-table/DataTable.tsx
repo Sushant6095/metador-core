@@ -161,7 +161,7 @@ export function DataTable<T>({
                   className={[
                     HEADER_BASE,
                     alignClass[col.align ?? 'left'],
-                    col.align === 'right' ? 'font-mono' : '',
+                    col.align === 'right' ? 'font-text tabular-nums' : '',
                     col.hideBelowSm ? 'hidden sm:table-cell' : '',
                   ]
                     .filter(Boolean)
@@ -276,7 +276,7 @@ export function DataTable<T>({
                         className={[
                           CELL_BASE,
                           alignClass[col.align ?? 'left'],
-                          isMono ? 'font-mono tabular-nums' : '',
+                          isMono ? 'font-text tabular-nums' : '',
                           col.align === 'right' ? 'whitespace-nowrap' : '',
                           'text-text',
                           col.hideBelowSm ? 'hidden sm:table-cell' : '',

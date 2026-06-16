@@ -110,7 +110,7 @@ export function AddressPill({
     'inline-flex items-center gap-1',
     'px-2 py-0.5 rounded-xs',
     'bg-raised border border-border',
-    'font-mono text-xs text-muted',
+    'font-code text-xs text-muted',
     'transition-colors duration-(--metador-duration-fast)',
   ].join(' ');
 

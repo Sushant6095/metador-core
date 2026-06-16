@@ -1,5 +1,12 @@
 # Logo decision — Metador mark
 
+> **⚠️ SUPERSEDED 2026-06-17 ([ADR-010](../../../../docs/decisions/010-hyperliquid-aligned-rebrand.md)).**
+> The mark is now a **geometric "M" monogram with a center keel point** — a single
+> even-width stroke tinted mint-green via `currentColor` (`--metador-primary`), sharp
+> and legible at 16px (`MetadorLogo.tsx`). It replaces both the keel-spine winner below
+> and the interim charging-bull. Original geometry; we do not copy Hyperliquid's mark.
+> The analysis below is retained as history.
+
 **Verdict date:** 2026-06-12
 **Decided by:** design agent (Design God charter — visual veto / final call)
 **Render evidence:** `/tmp/keel-logo-judge.html` → `/tmp/keel-logo-judge.png`

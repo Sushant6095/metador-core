@@ -168,6 +168,12 @@ making these four elements feel authoritative, calm, and trustworthy.
 
 ## 5. Divergence mandate (carried into DESIGN.md)
 
+> **⚠️ RETIRED by [ADR-010](../../decisions/010-hyperliquid-aligned-rebrand.md)
+> (2026-06-17, founder override).** Metador now *aligns* with the green/mint family
+> (primary `#50d2c1`) and Inter type by deliberate choice; the "primary hue must NOT be
+> teal/mint/green" mandate below no longer applies. The logo stays original. Kept for
+> historical context only.
+
 The benchmarks' shared signature is **mint/teal/green accent on cold near-black**. Therefore:
 - Keel's **primary hue family must NOT be teal/mint/green.** The prototype's #2DD4BF teal
   is Hyperliquid's exact family — it is **killed** as an accent (demoted to nothing; up/down

@@ -1,13 +1,14 @@
 /* Metador design tokens — CSS custom properties (single source of truth).
-   PROVISIONAL FREEZE 2026-06-11 — pending founder ratification (BOOTSTRAP
-   Phase F gate). Authored verbatim from DESIGN.md. No raw hex or app-local
-   values anywhere else (CLAUDE.md §1).
+   HYPERLIQUID-ALIGNED REBRAND 2026-06-17 (ADR-010): green primary + Inter type,
+   superseding the brass/Fraunces identity (CLAUDE.md §8 / DESIGN.md Divergence
+   Self-Check / PRINCIPLES.md §5 — all marked superseded by founder override).
+   No raw hex or app-local values anywhere else (CLAUDE.md §1).
 
    :root carries the dark (home) ramp. [data-theme='light'] overrides only the
    light-ramp tokens (web relief sections; the app ships dark-first).
 
-   Font tokens reference the next/font CSS variables with the DESIGN.md
-   fallback stacks. */
+   Font tokens reference the next/font CSS variables (Inter for UI + numerals,
+   JetBrains Mono for addresses/hashes/code) with DESIGN.md fallback stacks. */
 
 :root {
   /* ── Color — dark (home) ─────────────────────────────────────────────── */
@@ -18,23 +19,23 @@
   --metador-text: #eceff4;
   --metador-muted: #8a97a8;
   --metador-faint: #5c6675;
-  --metador-primary: #f2a516;
+  --metador-primary: #50d2c1; /* HL mint/teal — brand + CTA */
   /* Raw RGB triplet for use inside rgba() — matches --metador-primary dark ramp */
-  --metador-primary-rgb: 242, 165, 22;
-  --metador-primary-bright: #ffc24b;
-  --metador-primary-deep: #b97908;
-  --metador-on-primary: #0a0e14;
-  --metador-success: #4cb944;
-  --metador-warn: #db7e2d;
-  --metador-danger: #ff4d3e;
-  --metador-revoke: #e11d2a;
+  --metador-primary-rgb: 80, 210, 193;
+  --metador-primary-bright: #6ee7d6;
+  --metador-primary-deep: #1fa67d;
+  --metador-on-primary: #04140f;
+  --metador-success: #1fa67d; /* buy-green (up) */
+  --metador-warn: #ff8c00; /* orange accent (cumulative/secondary series) */
+  --metador-danger: #ed7088; /* salmon-rose (down) */
+  --metador-revoke: #e11d2a; /* hard red — REVOKE moment ONLY */
   --metador-on-revoke: #ffffff;
 
   /* ── Nav scrim — semi-opaque sticky nav background ──────────────────── */
   --metador-bg-scrim-nav: rgba(10, 14, 20, 0.92);
 
   /* ── Focus ring ──────────────────────────────────────────────────────── */
-  --metador-ring: #f2a516;
+  --metador-ring: #50d2c1;
   --metador-ring-width: 2px;
   --metador-ring-offset: 2px;
 
@@ -42,35 +43,52 @@
   --metador-overlay: rgba(6, 9, 14, 0.62);
   --metador-skeleton-base: #141b27;
   --metador-skeleton-sheen: #1f2937;
-  --metador-tint-success: rgba(76, 185, 68, 0.12);
-  --metador-tint-warn: rgba(219, 126, 45, 0.12);
-  --metador-tint-danger: rgba(255, 77, 62, 0.12);
+  --metador-tint-success: rgba(31, 166, 125, 0.12);
+  --metador-tint-warn: rgba(255, 140, 0, 0.12);
+  --metador-tint-danger: rgba(237, 112, 136, 0.14);
   --metador-tint-revoke: rgba(225, 29, 42, 0.14);
 
-  /* ── Typography — faces ──────────────────────────────────────────────── */
+  /* ── Typography — faces (Inter everywhere; JetBrains Mono for code/addrs) ─ */
   --metador-font-display: var(
-    --font-fraunces,
-    'Iowan Old Style',
-    Georgia,
-    'Times New Roman',
-    serif
-  );
-  --metador-font-text: var(
-    --font-geist-sans,
-    'Geist Sans',
-    'Inter var',
+    --font-inter,
+    'Inter',
     -apple-system,
     'Segoe UI',
     Roboto,
+    Helvetica,
+    Arial,
     sans-serif
   );
+  --metador-font-text: var(
+    --font-inter,
+    'Inter',
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif
+  );
+  /* Numerals are tabular Inter (HL convention), NOT monospace — use with
+     font-variant-numeric: tabular-nums lining-nums. */
   --metador-font-mono: var(
-    --font-geist-mono,
-    'Geist Mono',
+    --font-inter,
+    'Inter',
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif
+  );
+  /* Real monospace — addresses, tx hashes, code blocks only. */
+  --metador-font-code: var(
+    --font-jetbrains-mono,
     'JetBrains Mono',
     ui-monospace,
     SFMono-Regular,
     Menlo,
+    Monaco,
     monospace
   );
 
@@ -118,12 +136,6 @@
   --metador-radius-md: 8px;
   --metador-radius-lg: 12px;
   --metador-radius-xl: 18px;
-  /* --metador-radius-pill: floating nav pill on the web landing only.
-     NEW TOKEN added 2026-06-12 (landing premium pass, founder build-list #2).
-     Distinct from --metador-radius-full (999px, dots/avatars only): the pill is a
-     fixed generous radius for the detached rounded nav bar (choreography.md §3
-     measured 60px on the benchmark; we diverge to 32px — large but not their
-     signature 60px capsule). FOUNDER TO RATIFY at Phase F gate. */
   --metador-radius-pill: 32px;
   --metador-radius-full: 999px;
 
@@ -134,7 +146,7 @@
     0 2px 6px rgba(6, 10, 20, 0.4);
   --metador-shadow-modal: 0 24px 56px -12px rgba(4, 7, 12, 0.7),
     0 4px 12px rgba(4, 7, 12, 0.5);
-  --metador-glow-primary: 0 0 24px -4px rgba(242, 165, 22, 0.45);
+  --metador-glow-primary: 0 0 24px -4px rgba(80, 210, 193, 0.45);
   --metador-glow-revoke: 0 0 32px -2px rgba(225, 29, 42, 0.5);
 
   /* ── Z-layers ────────────────────────────────────────────────────────── */
@@ -159,13 +171,10 @@
 
 /* ── Dark ramp re-assert ──────────────────────────────────────────────────
    [data-theme='dark'] re-states the dark (home) ramp so a dark island can sit
-   INSIDE a [data-theme='light'] section without raw hex. Used by the flagship
-   product frame (the app lives dark even on a pale web section). Mirrors the
-   :root dark values exactly — single source of truth stays :root; this only
-   restores them when nested under a light ancestor. */
+   INSIDE a [data-theme='light'] section without raw hex. Mirrors :root. */
 [data-theme='dark'] {
   --metador-bg-scrim-nav: rgba(10, 14, 20, 0.92);
-  --metador-primary-rgb: 242, 165, 22;
+  --metador-primary-rgb: 80, 210, 193;
   --metador-bg: #0a0e14;
   --metador-surface: #111722;
   --metador-raised: #1a2230;
@@ -173,36 +182,35 @@
   --metador-text: #eceff4;
   --metador-muted: #8a97a8;
   --metador-faint: #5c6675;
-  --metador-primary: #f2a516;
-  --metador-primary-bright: #ffc24b;
-  --metador-primary-deep: #b97908;
-  --metador-on-primary: #0a0e14;
-  --metador-success: #4cb944;
-  --metador-warn: #db7e2d;
-  --metador-danger: #ff4d3e;
+  --metador-primary: #50d2c1;
+  --metador-primary-bright: #6ee7d6;
+  --metador-primary-deep: #1fa67d;
+  --metador-on-primary: #04140f;
+  --metador-success: #1fa67d;
+  --metador-warn: #ff8c00;
+  --metador-danger: #ed7088;
   --metador-revoke: #e11d2a;
   --metador-on-revoke: #ffffff;
 }
 
 /* ── Color — light ramp (web relief sections; dark-first overall) ─────────
-   Overrides exactly the light-ramp tokens from DESIGN.md. The app does not
-   use light mode in v1 — this ramp exists for web storytelling sections. */
+   Darker green primary (#0f9c78) for contrast on the pale ground. */
 [data-theme='light'] {
   --metador-bg-scrim-nav: rgba(247, 245, 240, 0.92);
-  /* RGB triplet for the light-ramp primary (#B97908) */
-  --metador-primary-rgb: 185, 121, 8;
-  --metador-bg: #f7f5f0;
+  --metador-primary-rgb: 15, 156, 120;
+  --metador-bg: #f7f8f6;
   --metador-surface: #ffffff;
-  --metador-raised: #fbf9f4;
-  --metador-border: #cfc7b6;
-  --metador-text: #1a1f29;
-  --metador-muted: #5a6472;
-  --metador-faint: #8b93a1;
-  --metador-primary: #b97908;
-  --metador-primary-bright: #8f5c04;
-  --metador-success: #147346;
-  --metador-warn: #8f5410;
-  --metador-danger: #c8303e;
+  --metador-raised: #f1f4f2;
+  --metador-border: #d3dad6;
+  --metador-text: #0f1a17;
+  --metador-muted: #566069;
+  --metador-faint: #8b939a;
+  --metador-primary: #0f9c78;
+  --metador-primary-bright: #0c7d60;
+  --metador-primary-deep: #0a6a52;
+  --metador-success: #0f9c78;
+  --metador-warn: #b5610a;
+  --metador-danger: #c14a62;
   --metador-revoke: #b5121d;
   --metador-on-primary: #ffffff;
   --metador-on-revoke: #ffffff;

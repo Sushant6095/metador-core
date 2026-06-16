@@ -64,7 +64,8 @@ export const springMeter = {
  * apply the resulting classes to `<html>` so `--metador-font-*` resolve.
  */
 export const METADOR_FONT_VARS = {
-  display: '--font-fraunces',
-  text: '--font-geist-sans',
-  mono: '--font-geist-mono',
+  display: '--font-inter',
+  text: '--font-inter',
+  mono: '--font-inter',
+  code: '--font-jetbrains-mono',
 } as const;

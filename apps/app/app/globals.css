@@ -43,6 +43,7 @@
   --font-display: var(--metador-font-display);
   --font-text: var(--metador-font-text);
   --font-mono: var(--metador-font-mono);
+  --font-code: var(--metador-font-code);
 
   /* Type scale + companion line-heights */
   --text-2xs: var(--metador-text-2xs);
@@ -226,7 +227,7 @@ body {
 
 /* ── Docs prose — inline code (outside pre blocks) ──────────────────────── */
 .docs-prose :not(pre) > code {
-  font-family: var(--metador-font-mono);
+  font-family: var(--metador-font-code);
   font-size: 0.85em;
   background-color: var(--metador-raised);
   border: 1px solid var(--metador-border);

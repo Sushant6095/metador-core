@@ -1,31 +1,21 @@
-import { Fraunces, Geist, Geist_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono } from 'next/font/google';
 
 /**
- * Metador faces, loaded via next/font (subset + font-display: swap). The CSS
- * variable names match METADOR_FONT_VARS in @metador/design-system so the
- * `--metador-font-*` tokens resolve. (DESIGN.md Typography.)
- *
- * Fraunces is the warm old-style optical serif (brand voice). Its optical
- * size, softness, and wonk axes are enabled so the display face reads warm
- * and human, deliberately unlike a high-contrast cut.
+ * Metador faces (ADR-010, Hyperliquid-aligned). Inter carries all UI, body, and
+ * numerals (tabular-nums); JetBrains Mono is the real monospace for addresses,
+ * tx hashes, and code only. Loaded via next/font (subset + font-display: swap).
+ * CSS variable names match METADOR_FONT_VARS in @metador/design-system so the
+ * `--metador-font-*` tokens resolve.
  */
-export const fraunces = Fraunces({
+export const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-fraunces',
-  axes: ['opsz', 'SOFT', 'WONK'],
+  variable: '--font-inter',
 });
 
-/** Geist Sans — all UI and body text. Sharp, mechanical neo-grotesque. */
-export const geistSans = Geist({
+/** JetBrains Mono — addresses, tx hashes, code blocks only (never numerals). */
+export const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-geist-sans',
-});
-
-/** Geist Mono — every numeral on money/market surfaces, addresses, code. */
-export const geistMono = Geist_Mono({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-geist-mono',
+  variable: '--font-jetbrains-mono',
 });

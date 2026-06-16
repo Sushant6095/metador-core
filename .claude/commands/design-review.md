@@ -22,10 +22,11 @@ item · PASS/FAIL · evidence.
    shift; CLS < 0.05 on the route.
 7. A11Y: keyboard path through the primary flow; visible focus; AA contrast
    (check token pairs).
-8. DIVERGENCE CHECK: primary hue family differs from every benchmark;
-   display typeface differs; screenshot of ours next to closest reference
-   reads as two different brands. Required before token freeze and on every
-   new surface.
+8. BRAND-CONSISTENCY CHECK (ADR-010, supersedes the old divergence check):
+   primary hue matches the green `--metador-*` tokens (`#50d2c1` family), zero
+   off-token colors, Inter everywhere with tabular-nums numerals, JetBrains Mono
+   only for addresses/hashes/code, and the geometric-M logo present. The old
+   "hue must differ from Hyperliquid" rule is retired — alignment is intentional.
 9. KEEL IDENTITY PRESENT: policy card / budget meter / activity feed / revoke
    treated as hero elements where they appear, not buried.
 

@@ -25,10 +25,10 @@ interface MetadorMarkProps {
 }
 
 /**
- * The charging-bull mark — Metador's emblem: a bull at full charge, head
- * lowered, horns thrust forward, tail up. A bold filled silhouette in
- * currentColor so callers tint it (text-primary = brass) and it stays crisp
- * down to 16px. Original art — our own geometry, not derived from any mark.
+ * The Metador monogram — a geometric "M" whose center dips into a keel point
+ * (the keel-spine concept, ADR-010). A single even-width stroke in currentColor
+ * so callers tint it (text-primary = mint-green) and it stays crisp and legible
+ * down to 16px. Original geometry — not derived from any mark.
  */
 export function MetadorMark({
   size = 24,
@@ -38,7 +38,7 @@ export function MetadorMark({
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 64 64"
+      viewBox="0 0 32 32"
       fill="none"
       width={size}
       height={size}
@@ -48,25 +48,15 @@ export function MetadorMark({
       aria-label={ariaHidden ? undefined : 'Metador'}
       focusable="false"
     >
-      {/* Charging bull — composed silhouette (body + shoulder hump, lowered
-          horned head, raised tail, galloping legs). Filled shapes union into
-          one solid mark; currentColor tints the whole thing. */}
-      <g fill="currentColor" stroke="none">
-        {/* body + powerful shoulder hump, back sloping to the rump */}
-        <path d="M9 30 Q11 21 22 20 Q29 15 38 18 Q44 20 46 26 L45 34 Q44 39 38 41 Q24 44 16 40 Q10 37 9 30 Z" />
-        {/* lowered head + muzzle, charging down to the right */}
-        <path d="M45 25 Q53 25 57 31 L60 39 Q60 42 56 41 L49 39 Q44 36 44 30 Z" />
-        {/* horns — twin forward sweep (the anger) */}
-        <path d="M50 26 Q57 19 63 17 Q60 21 56 27 Q53 28 50 26 Z" />
-        <path d="M49 28 Q54 23 60 22 Q57 26 53 30 Q51 30 49 28 Z" />
-        {/* tail flicked up over the rump */}
-        <path d="M12 30 Q6 25 8 15 Q10 17 11 24 Q13 28 14 31 Z" />
-        {/* legs — gallop stagger: front pair reaching, hind pair driving */}
-        <path d="M42 39 L48 55 L45 56 L39 40 Z" />
-        <path d="M38 40 L38 57 L41 57 L42 40 Z" />
-        <path d="M22 40 L24 57 L21 57 L19 40 Z" />
-        <path d="M17 39 L11 54 L14 55 L20 40 Z" />
-      </g>
+      {/* Geometric "M" with a center keel point — even stroke, currentColor. */}
+      <path
+        d="M5 24 V8.5 L16 20.5 L27 8.5 V24"
+        stroke="currentColor"
+        strokeWidth={3.4}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
     </svg>
   );
 }

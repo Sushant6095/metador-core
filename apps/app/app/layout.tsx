@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { AppAnalytics } from './analytics';
 import { TopNav } from './components/TopNav';
-import { fraunces, geistMono, geistSans } from './fonts';
+import { inter, jetbrainsMono } from './fonts';
 import './globals.css';
 import { Providers } from './providers';
 
@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${geistSans.variable} ${geistMono.variable}`}
+      className={`${inter.variable} ${jetbrainsMono.variable}`}
     >
       <body>
         <Providers>

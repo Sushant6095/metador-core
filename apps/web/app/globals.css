@@ -43,6 +43,7 @@
   --font-display: var(--metador-font-display);
   --font-text: var(--metador-font-text);
   --font-mono: var(--metador-font-mono);
+  --font-code: var(--metador-font-code);
 
   /* Type scale + companion line-heights */
   --text-2xs: var(--metador-text-2xs);

@@ -1,5 +1,14 @@
 # DESIGN.md — Metador
 
+> **⚠️ SUPERSEDED IN PART BY [ADR-010](docs/decisions/010-hyperliquid-aligned-rebrand.md)
+> (2026-06-17, founder override).** The brand identity is now **Hyperliquid-aligned**:
+> primary = mint-green `#50d2c1` (not brass), type = **Inter** for UI/body/numerals
+> (not Fraunces/Geist; JetBrains Mono only for addresses/code), logo = the geometric
+> "M" monogram (not the bull). The **Divergence Self-Check below is retired** — replaced
+> by a brand-*consistency* check (`/design-review` item 8). The brass/Fraunces values
+> and the "must differ from Hyperliquid" mandate in this file are historical. The live
+> token source of truth is `packages/design-system/src/tokens.css`.
+
 > **STATUS: PROVISIONAL FREEZE 2026-06-11 — pending founder ratification
 > (BOOTSTRAP Phase F gate).** These tokens, faces, and motion values are the
 > design agent's proposal. They are buildable-against now, but they are NOT

@@ -130,7 +130,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     pre: ({ children, ...props }) => (
       <div className="relative group mb-4">
         <pre
-          className="rounded-md border border-border bg-surface p-4 overflow-x-auto text-sm font-mono leading-relaxed"
+          className="rounded-md border border-border bg-surface p-4 overflow-x-auto text-sm font-code leading-relaxed"
           style={{ color: 'var(--metador-text)' }}
           {...props}
         >

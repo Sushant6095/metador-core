@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import './atmosphere.css';
-import { fraunces, geistMono, geistSans } from './fonts';
+import { inter, jetbrainsMono } from './fonts';
 import { SkipLink } from './components/skip-link/SkipLink';
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${geistSans.variable} ${geistMono.variable}`}
+      className={`${inter.variable} ${jetbrainsMono.variable}`}
     >
       <body>
         <SkipLink />
