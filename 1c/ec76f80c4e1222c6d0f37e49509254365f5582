@@ -1,0 +1,61 @@
+packages/design-system/src/logo/DECISION.md
+  s_b05af9fb5ac634::t_2274800ba21958 3-9
+docs/decisions/011-sanctioned-ui-libraries.md
+  s_b05af9fb5ac634::t_ddfb1be72a59bb 1-45
+WORKLOG.md
+  s_b05af9fb5ac634::t_29954670451979 24
+apps/app/app/layout.tsx
+  s_b05af9fb5ac634::t_caacd68dff9ba4 4
+  s_b05af9fb5ac634::t_bbb96a2fa4a757 22
+apps/app/app/fonts.ts
+  s_b05af9fb5ac634::t_5ba9e669b4f93b 1,4-8,10,13,16-17,20
+packages/ui/src/data-table/DataTable.tsx
+  s_b05af9fb5ac634::t_dd8dc2b44fb26f 279
+  s_b05af9fb5ac634::t_ce9f5a31a55536 164
+.claude/commands/design-review.md
+  s_b05af9fb5ac634::t_1dbc1e5f332102 25-29
+apps/app/app/docs/_components/MarkdownRenderer.tsx
+  s_b05af9fb5ac634::t_22cba295c664a2 133
+DESIGN.md
+  s_b05af9fb5ac634::t_842874ae387424 3-11
+apps/web/app/fonts.ts
+  s_b05af9fb5ac634::t_a7949e27261503 1,4-8,10,13,16-17,20
+docs/decisions/010-hyperliquid-aligned-rebrand.md
+  s_b05af9fb5ac634::t_d72492e3f799c6 1-52
+packages/design-system/src/tokens.css
+  s_b05af9fb5ac634::t_dce29217a39511 2-5,10-11,22,24-31,38,46-48,51,53-60,63-64,68-69,72-73,75-86,91,149,174,177,185-191,197,200-201,203-213
+apps/web/app/layout.tsx
+  s_b05af9fb5ac634::t_8b0b14e430748f 21
+  s_b05af9fb5ac634::t_3adb953bfb1223 4
+packages/design-system/src/index.ts
+  s_b05af9fb5ac634::t_18d168717935c4 67-70
+apps/web/app/globals.css
+  s_b05af9fb5ac634::t_4f53f97099f8e7 46
+apps/app/app/globals.css
+  s_b05af9fb5ac634::t_9ef9de2a38f838 46
+  s_b05af9fb5ac634::t_de8c398e0d368e 230
+packages/ui/src/logo/MetadorLogo.tsx
+  s_b05af9fb5ac634::t_ab87ec3acbc56a 28-31
+  s_b05af9fb5ac634::t_f24abe9906536c 41
+  s_b05af9fb5ac634::t_c892ba8141ba72 51-59
+packages/ui/src/address-pill/AddressPill.tsx
+  s_b05af9fb5ac634::t_7742fa157aed11 113
+docs/research/refs/PRINCIPLES.md
+  s_b05af9fb5ac634::t_34ed9dc1a57186 171-176
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "1cec76f80c4e1222c6d0f37e49509254365f5582",
+  "prompts": {},
+  "sessions": {
+    "s_b05af9fb5ac634": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "801087ee-9471-4937-8b4a-6514e891aedf",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Sushant Jain <sushant.jain@vyapar.com>"
+    }
+  }
+}
