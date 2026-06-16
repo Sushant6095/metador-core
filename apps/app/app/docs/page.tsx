@@ -1,16 +1,41 @@
-import { redirect } from 'next/navigation';
-
 /**
- * Docs entry point. The developer docs live in `apps/docs` as a Git-synced
- * GitBook space (.gitbook.yaml), not a Next.js route — so /docs redirects to the
- * published docs. URL is env-configurable (`NEXT_PUBLIC_DOCS_URL`); until the
- * GitBook space is published it falls back to the docs source on GitHub, which
- * renders the SUMMARY tree and pages directly.
+ * /docs — root page, renders apps/docs/README.md.
+ * Server component: reads the file at request time (Next.js dev safe).
+ * outputFileTracingRoot is set to repo root in next.config.ts so the path
+ * ../../apps/docs resolves correctly from process.cwd() = apps/app.
  */
-const DOCS_URL =
-  process.env.NEXT_PUBLIC_DOCS_URL ??
-  'https://github.com/Sushant6095/metador-core/tree/main/apps/docs';
+import { notFound } from 'next/navigation';
+import {
+  parseSummary,
+  readDocFile,
+  findNavItem,
+  getNextPage,
+} from '../../lib/docs-nav';
+import { extractHeadings } from './_components/toc-headings';
+import { DocsPageLayout } from './_components/DocsPageLayout';
+import { MarkdownRenderer } from './_components/MarkdownRenderer';
 
-export default function DocsRedirect() {
-  redirect(DOCS_URL);
+export default function DocsRootPage() {
+  const groups = parseSummary();
+  const content = readDocFile('README.md');
+
+  if (!content) notFound();
+
+  const headings = extractHeadings(content);
+  const navMatch = findNavItem(groups, '/docs');
+  const nextPage = getNextPage(groups, '/docs');
+
+  const breadcrumb = navMatch
+    ? { group: navMatch.group.label, page: navMatch.item.title }
+    : null;
+
+  return (
+    <DocsPageLayout
+      breadcrumb={breadcrumb}
+      headings={headings}
+      nextPage={nextPage}
+    >
+      <MarkdownRenderer content={content} />
+    </DocsPageLayout>
+  );
 }

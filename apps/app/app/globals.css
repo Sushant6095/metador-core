@@ -164,3 +164,82 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Docs portal — highlight.js code theme (brass-on-dark) ──────────────────
+   We use rehype-highlight which adds hljs classes. Map them to our tokens.
+   No raw hex: every value resolves to a --metador-* variable. */
+.hljs {
+  background: transparent;
+  color: var(--metador-text);
+}
+.hljs-comment,
+.hljs-quote {
+  color: var(--metador-faint);
+  font-style: italic;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: var(--metador-primary);
+  font-weight: var(--metador-weight-medium);
+}
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: var(--metador-primary-bright);
+}
+.hljs-string,
+.hljs-doctag {
+  color: var(--metador-success);
+}
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: var(--metador-text);
+  font-weight: var(--metador-weight-medium);
+}
+.hljs-type,
+.hljs-class .hljs-title {
+  color: var(--metador-warn);
+}
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+  color: var(--metador-muted);
+}
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-addition {
+  color: var(--metador-primary-bright);
+}
+.hljs-deletion {
+  color: var(--metador-danger);
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: var(--metador-weight-semibold);
+}
+
+/* ── Docs prose — inline code (outside pre blocks) ──────────────────────── */
+.docs-prose :not(pre) > code {
+  font-family: var(--metador-font-mono);
+  font-size: 0.85em;
+  background-color: var(--metador-raised);
+  border: 1px solid var(--metador-border);
+  border-radius: var(--metador-radius-xs);
+  padding: 0.1em 0.35em;
+  color: var(--metador-primary-bright);
+}
+
+/* cmdk — theme via tokens (no raw colors) */
+[data-cmdk-root] {
+  font-family: var(--metador-font-text);
+}
+[data-cmdk-item][aria-selected="true"] {
+  background-color: var(--metador-raised);
+  color: var(--metador-primary);
+}
