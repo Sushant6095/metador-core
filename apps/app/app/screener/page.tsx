@@ -219,10 +219,10 @@ interface StatSlotProps {
 }
 function StatSlot({ label, value, unit, accent }: StatSlotProps) {
   return (
-    <div className="flex flex-col gap-1 px-4 first:pl-0 min-w-0">
-      <span className="text-2xs uppercase tracking-widest text-muted truncate">{label}</span>
+    <div className="flex flex-col gap-2 px-4 first:pl-0 min-w-0">
+      <span className="text-xs uppercase tracking-widest text-muted truncate">{label}</span>
       <span
-        className="font-mono text-2xl leading-none truncate"
+        className="font-mono text-4xl sm:text-5xl leading-none truncate"
         style={{
           fontVariantNumeric: 'tabular-nums lining-nums',
           color: accent ? 'var(--metador-primary)' : 'var(--metador-text)',
@@ -239,7 +239,7 @@ function StatBandStrip({ band }: { band: StatBand }) {
   const tvl = abbreviateTvl(band.tvlDbusdc, 6, '');
   return (
     <div
-      className="flex items-stretch divide-x divide-border rounded-md border border-border bg-surface px-4 py-2 overflow-x-auto"
+      className="flex items-stretch divide-x divide-border py-3 overflow-x-auto"
       role="group"
       aria-label="Leaderboard totals"
     >
@@ -483,7 +483,7 @@ function CompactBudgetBar({ spent, budget }: { spent: bigint; budget: bigint }) 
         />
       </div>
       <span
-        className="inline-flex items-center gap-0.5 font-mono text-xs shrink-0 w-[44px] justify-end"
+        className="inline-flex items-center gap-0.5 font-mono text-xs shrink-0 w-11 justify-end"
         style={{
           fontVariantNumeric: 'tabular-nums lining-nums',
           color: isLocked ? 'var(--metador-faint)' : isWarn ? 'var(--metador-warn)' : 'var(--metador-muted)',
@@ -546,7 +546,7 @@ function VaultRow({ vault }: VaultRowProps) {
           <Link
             href={`/vault/${vault.id}`}
             onClick={() => track(METADOR_EVENTS.vaultViewed, { vault_id: vault.id })}
-            className="font-medium text-xs text-text hover:text-primary truncate max-w-[140px] sm:max-w-[180px] transition-colors duration-(--metador-duration-fast) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-xs"
+            className="font-medium text-xs text-text hover:text-primary truncate max-w-36 sm:max-w-44 transition-colors duration-(--metador-duration-fast) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-xs"
           >
             {vault.name}
           </Link>
@@ -571,7 +571,7 @@ function VaultRow({ vault }: VaultRowProps) {
       <td className={`${NUMERIC_CELL} py-2 ${navColor}`} aria-label={`7-day NAV delta: ${navText}`}>
         <div className="flex items-center justify-end gap-2">
           <Sparkline series={vault.sparkline7d} />
-          <span className="w-[58px] text-right">{navText}</span>
+          <span className="w-14 text-right">{navText}</span>
         </div>
       </td>
 
