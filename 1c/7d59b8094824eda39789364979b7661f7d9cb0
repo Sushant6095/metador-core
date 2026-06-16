@@ -1,0 +1,23 @@
+apps/app/app/screener/page.tsx
+  s_b05af9fb5ac634::t_aec40803554fc6 574
+  s_b05af9fb5ac634::t_662f227fef139f 242
+  s_b05af9fb5ac634::t_c2ba4ef56b4c96 486
+  s_b05af9fb5ac634::t_a612374fd64fbe 222-223,225
+  s_b05af9fb5ac634::t_b4301d221f4863 549
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "1c7d59b8094824eda39789364979b7661f7d9cb0",
+  "prompts": {},
+  "sessions": {
+    "s_b05af9fb5ac634": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "801087ee-9471-4937-8b4a-6514e891aedf",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Sushant Jain <sushant.jain@vyapar.com>"
+    }
+  }
+}
