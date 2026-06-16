@@ -19,6 +19,7 @@ const NAV_LINKS: NavLink[] = [
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/cockpit', label: 'Cockpit' },
   { href: '/safety', label: 'Safety' },
+  { href: '/docs', label: 'Docs' },
 ];
 
 const MENU_ID = 'topnav-mobile-menu';
